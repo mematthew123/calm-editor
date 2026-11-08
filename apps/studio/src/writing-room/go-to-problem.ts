@@ -9,7 +9,7 @@ function reveal(element: Element | null) {
 
 /**
  * Takes the Writer to the thing blocking their publish: scrolls it into view and puts the caret
- * there, rather than listing errors. See docs/adr/0002-only-prose-is-required-to-publish.md.
+ * there, rather than listing errors.
  */
 export function goToProblem(target: ProblemTarget, editor: Editor, openDetails: () => void) {
   if (target.kind === 'details') {

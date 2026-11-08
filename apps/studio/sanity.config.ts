@@ -6,6 +6,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 import {withPostDetailsOnPublish} from './src/actions/publish-post'
+import {dataset, projectId} from './src/lib/env'
 import {theme} from './src/theme'
 import {writingRoom} from './src/writing-room'
 
@@ -13,8 +14,8 @@ export default defineConfig({
   name: 'default',
   title: 'Calm Editor',
 
-  projectId: '3x95lfwz',
-  dataset: 'production',
+  projectId,
+  dataset,
 
   plugins: [structureTool(), writingRoom(), visionTool()],
 

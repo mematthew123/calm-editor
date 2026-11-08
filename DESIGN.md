@@ -147,7 +147,7 @@ components:
 
 # Calm Editor design
 
-The visual and interaction language of the Writing Room, the Studio around it, and the Reading Site. Vocabulary (Writer, Post, Prose, Room Controls…) is defined in [CONTEXT.md](./CONTEXT.md).
+The visual and interaction language of the Writing Room, the Studio around it, and the Reading Site.
 
 **Source of truth:** token values live in [`packages/tokens/src/index.ts`](./packages/tokens/src/index.ts). The front matter above mirrors them for people and agents, and a test in `@calm/tokens` fails if the two disagree. Change the tokens first, then this file.
 
