@@ -21,14 +21,7 @@ import {
 } from 'react'
 import styled from 'styled-components'
 import {Floating, FloatingSurface, useViewportChanges} from './floating'
-
-function normalizeHref(input: string): string | null {
-  const href = input.trim()
-  if (!href) return null
-  if (/^(https?:|mailto:)/i.test(href)) return href
-  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(href)) return `mailto:${href}`
-  return `https://${href}`
-}
+import {normalizeHref} from './link'
 
 /**
  * Formatting for selected text: a soft pill that appears above the selection. Alt+F10 moves
