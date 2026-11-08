@@ -10,7 +10,15 @@ import {BoldIcon} from '@sanity/icons/Bold'
 import {ItalicIcon} from '@sanity/icons/Italic'
 import {LinkIcon} from '@sanity/icons/Link'
 import {UnlinkIcon} from '@sanity/icons/Unlink'
-import {type ComponentType, type ReactNode, useCallback, useEffect, useLayoutEffect, useState} from 'react'
+import {
+  type ComponentType,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 import {Floating, FloatingSurface, useViewportChanges} from './floating'
 
@@ -22,7 +30,10 @@ function normalizeHref(input: string): string | null {
   return `https://${href}`
 }
 
-/** Formatting for selected text: a soft pill that appears above the selection. */
+/**
+ * Formatting for selected text: a soft pill that appears above the selection. Alt+F10 moves
+ * keyboard focus into it (it's portaled, so Tab never reaches it); Esc returns to the text.
+ */
 export function SelectionBubble({scheme, editorFocused}: {scheme: string; editorFocused: boolean}) {
   const editor = useEditor()
   const expanded = useEditorSelector(editor, isSelectionExpanded)
@@ -38,8 +49,11 @@ export function SelectionBubble({scheme, editorFocused}: {scheme: string; editor
   const [anchor, setAnchor] = useState<DOMRect | null>(null)
   const [linkDraft, setLinkDraft] = useState<string | null>(null)
   const [savedSelection, setSavedSelection] = useState(selection)
+  const [toolbarFocused, setToolbarFocused] = useState(false)
+  const surface = useRef<HTMLDivElement>(null)
 
-  const visible = expanded && !onBlockObject && (editorFocused || linkDraft !== null)
+  const visible =
+    expanded && !onBlockObject && (editorFocused || toolbarFocused || linkDraft !== null)
 
   const measure = useCallback(() => {
     setAnchor(visible ? editor.dom.getSelectionRect(editor.getSnapshot()) : null)
@@ -50,6 +64,17 @@ export function SelectionBubble({scheme, editorFocused}: {scheme: string; editor
   useEffect(() => {
     if (!expanded) setLinkDraft(null)
   }, [expanded])
+
+  useEffect(() => {
+    if (!visible || !editorFocused) return undefined
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!event.altKey || event.key !== 'F10') return
+      event.preventDefault()
+      surface.current?.querySelector('button')?.focus()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [visible, editorFocused])
 
   if (!visible || !anchor) return null
 
@@ -69,7 +94,20 @@ export function SelectionBubble({scheme, editorFocused}: {scheme: string; editor
 
   return (
     <Floating anchor={anchor} scheme={scheme} role="toolbar" aria-label="Formatting">
-      <FloatingSurface $round>
+      <FloatingSurface
+        ref={surface}
+        $round
+        onFocus={() => setToolbarFocused(true)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setToolbarFocused(false)
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && event.target instanceof HTMLButtonElement) {
+            event.preventDefault()
+            editor.send({type: 'focus'})
+          }
+        }}
+      >
         {linkDraft === null ? (
           <Row>
             <BubbleButton label="Bold" icon={BoldIcon} active={bold} onPress={() => run({type: 'decorator.toggle', decorator: 'strong'})} />
