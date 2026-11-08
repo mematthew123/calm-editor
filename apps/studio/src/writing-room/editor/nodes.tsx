@@ -10,7 +10,8 @@ import {EmbedBlock} from './blocks/EmbedBlock'
 import {ImageBlock} from './blocks/ImageBlock'
 import {SectionBreak} from './blocks/SectionBreak'
 
-function TextBlock({attributes, children, node}: TextBlockRenderProps) {
+function TextBlock({attributes: pteAttributes, children, node}: TextBlockRenderProps) {
+  const attributes = {...pteAttributes, 'data-calm-block': node._key}
   if (node.listItem) {
     return (
       <div {...attributes} data-list-item={node.listItem} data-level={node.level ?? 1}>

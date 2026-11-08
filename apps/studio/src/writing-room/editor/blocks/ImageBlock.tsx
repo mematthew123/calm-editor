@@ -16,7 +16,7 @@ export function ImageBlock({attributes, children, node, selected}: BlockObjectRe
   const caption = useBlockField(node._key, 'caption', node.caption)
 
   return (
-    <BlockFrame {...attributes} $selected={selected}>
+    <BlockFrame {...attributes} data-calm-block={node._key} $selected={selected}>
       {children}
       <Controls>
         {src ? (
@@ -26,6 +26,7 @@ export function ImageBlock({attributes, children, node, selected}: BlockObjectRe
         )}
         <FieldInput
           aria-label="Image description"
+          data-calm-field={`${node._key}.alt`}
           placeholder="Describe this image for people who can’t see it"
           value={alt.value}
           onChange={(event) => alt.onChange(event.currentTarget.value)}

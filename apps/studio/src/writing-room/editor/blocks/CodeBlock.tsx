@@ -18,7 +18,7 @@ export function CodeBlock({attributes, children, node, selected, focused}: Block
   }, [code.value])
 
   return (
-    <BlockFrame {...attributes} $selected={selected}>
+    <BlockFrame {...attributes} data-calm-block={node._key} $selected={selected}>
       {children}
       <Card>
         <Language
@@ -40,6 +40,7 @@ export function CodeBlock({attributes, children, node, selected, focused}: Block
            
           autoFocus={focused && !code.value}
           aria-label="Code"
+          data-calm-field={`${node._key}.code`}
           spellCheck={false}
           rows={1}
           value={code.value}

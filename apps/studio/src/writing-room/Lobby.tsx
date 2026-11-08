@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import {useAllPostsPath, useLeaveToStudio} from './navigation'
 import {describePostStatus, timeAgo} from './post-status'
 import {Column, Placeholder, QuietButton, RoomControls, SectionLabel} from './primitives'
+import {ThemeToggle} from './room-status'
 import {useEscape} from './use-escape'
 
 const RECENT_POSTS = 8
@@ -31,6 +32,7 @@ export function Lobby() {
             Leave the Writing Room
           </QuietButton>
         }
+        end={<ThemeToggle />}
       />
       <Column as="main">
         <Greeting />

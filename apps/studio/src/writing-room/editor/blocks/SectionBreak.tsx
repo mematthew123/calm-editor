@@ -2,9 +2,9 @@ import {type BlockObjectRenderProps} from '@portabletext/editor'
 import styled from 'styled-components'
 import {BlockFrame} from './frame'
 
-export function SectionBreak({attributes, children, selected}: BlockObjectRenderProps) {
+export function SectionBreak({attributes, children, node, selected}: BlockObjectRenderProps) {
   return (
-    <Frame {...attributes} $selected={selected}>
+    <Frame {...attributes} data-calm-block={node._key} $selected={selected}>
       {children}
       <Ornament contentEditable={false} role="separator" aria-label="Section break">
         ✦ ✦ ✦

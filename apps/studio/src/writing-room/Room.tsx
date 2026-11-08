@@ -8,7 +8,7 @@ import {
   useDocument,
   useDocumentProjection,
 } from '@sanity/sdk-react'
-import {Suspense, useCallback, useMemo, useState} from 'react'
+import {Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {useColorSchemeValue} from 'sanity'
 import {useRouter} from 'sanity/router'
 import styled from 'styled-components'
@@ -16,9 +16,19 @@ import {BodyEditor} from './editor/BodyEditor'
 import {useBodySchema} from './editor/schema'
 import {isEmptyPost} from './empty-post'
 import {useOpenDetails} from './navigation'
-import {Column, Placeholder, QuietButton, RoomControls} from './primitives'
+import {describePostStatus} from './post-status'
+import {Column, Placeholder, QuietButton, Recedes, RoomControls} from './primitives'
+import {
+  Presence,
+  PublishButton,
+  type RoomNotice,
+  SaveState,
+  StatusLabel,
+  ThemeToggle,
+} from './room-status'
 import {TitleField} from './TitleField'
 import {useEscape} from './use-escape'
+import {useRecede} from './use-recede'
 
 /** The Writing Room for one Post. */
 export function Room({postId}: {postId: string}) {
@@ -52,6 +62,8 @@ function LoadingRoom() {
   )
 }
 
+const NOTICE_VISIBLE_MS = 8000
+
 function LoadedRoom({
   handle,
   problem,
@@ -64,12 +76,27 @@ function LoadedRoom({
   const scheme = useColorSchemeValue()
   const schemaDefinition = useBodySchema()
   const {data} = useDocumentProjection<{_id: string}>({...handle, projection: '{_id}'})
-  const isPublished = !!data?._status?.lastEditedPublishedAt
+  const status = describePostStatus(data?._status)
+  const isPublished = status.label !== 'Draft'
+  const page = useRef<HTMLElement>(null)
+  const receded = useRecede(page)
+  const [notice, setNotice] = useState<RoomNotice | null>(null)
+
+  useEffect(() => {
+    if (!notice) return undefined
+    const timer = setTimeout(() => setNotice(null), NOTICE_VISIBLE_MS)
+    return () => clearTimeout(timer)
+  }, [notice])
 
   return (
     <EditorProvider initialConfig={{schemaDefinition}}>
       <RoomControls
-        start={<LeaveButton handle={handle} isPublished={isPublished} />}
+        receded={receded}
+        start={
+          <Recedes>
+            <LeaveButton handle={handle} isPublished={isPublished} />
+          </Recedes>
+        }
         end={
           <>
             {problem && (
@@ -78,11 +105,32 @@ function LoadedRoom({
                 <QuietButton icon={CloseIcon} aria-label="Dismiss" onClick={() => onProblem(null)} />
               </Problem>
             )}
-            <DetailsButton postId={handle.documentId} />
+            <Presence handle={handle} />
+            <SaveState handle={handle} />
+            <Recedes>
+              {notice ? (
+                <Notice role="status">
+                  {notice.text}
+                  {notice.action && (
+                    <QuietButton onClick={notice.action.onClick}>{notice.action.label}</QuietButton>
+                  )}
+                </Notice>
+              ) : (
+                <StatusLabel status={status} />
+              )}
+              <ThemeToggle />
+              <DetailsButton postId={handle.documentId} />
+              <PublishButton
+                handle={handle}
+                status={status}
+                onProblem={onProblem}
+                onNotice={setNotice}
+              />
+            </Recedes>
           </>
         }
       />
-      <Page as="article">
+      <Page as="article" ref={page}>
         <Title handle={handle} isPublished={isPublished} />
         <BodyEditor handle={handle} scheme={scheme} onUploadFailed={onProblem} />
       </Page>
@@ -134,6 +182,14 @@ const Page = styled(Column)`
   font-size: var(--calm-prose-size-medium);
   font-weight: var(--calm-weight-prose);
   line-height: var(--calm-type-prose-leading);
+`
+
+const Notice = styled.span`
+  display: flex;
+  align-items: center;
+  gap: var(--calm-space-xs);
+  color: var(--calm-color-ink-muted);
+  font-size: var(--calm-type-ui-size-small);
 `
 
 const Problem = styled.p`

@@ -46,6 +46,24 @@ const ControlsBar = styled.header`
   & > * {
     pointer-events: auto;
   }
+
+  [data-recedes] {
+    transition: opacity var(--calm-motion-recede) var(--calm-motion-easing);
+  }
+
+  &[data-receded='true'] [data-recedes] {
+    opacity: 0.08;
+  }
+
+  &:focus-within [data-recedes] {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-recedes] {
+      transition: none;
+    }
+  }
 `
 
 const ControlsGroup = styled.div`
@@ -54,10 +72,22 @@ const ControlsGroup = styled.div`
   gap: var(--calm-space-xs);
 `
 
-/** Room Controls: quiet, in the corners, never over the Prose. */
-export function RoomControls({start, end}: {start?: ReactNode; end?: ReactNode}) {
+/**
+ * Room Controls: quiet, in the corners, never over the Prose. Wrap anything that should fade
+ * while the Writer types in {@link Recedes}; leave things that must stay visible (offline,
+ * a blocked publish, presence) unwrapped.
+ */
+export function RoomControls({
+  start,
+  end,
+  receded = false,
+}: {
+  start?: ReactNode
+  end?: ReactNode
+  receded?: boolean
+}) {
   return (
-    <ControlsBar aria-label="Room controls">
+    <ControlsBar aria-label="Room controls" data-receded={receded}>
       <ControlsGroup>{start}</ControlsGroup>
       <ControlsGroup>{end}</ControlsGroup>
     </ControlsBar>
@@ -100,6 +130,17 @@ const QuietButtonRoot = styled.button`
     transition: none;
   }
 `
+
+/** Room Controls that fade while the Writer is typing. */
+const RecedesRoot = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--calm-space-xs);
+`
+
+export function Recedes({children}: {children: ReactNode}) {
+  return <RecedesRoot data-recedes="">{children}</RecedesRoot>
+}
 
 /** The default for every Room Control that isn't Publish. */
 export function QuietButton({

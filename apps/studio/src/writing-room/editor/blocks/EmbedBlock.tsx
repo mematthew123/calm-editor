@@ -8,7 +8,7 @@ import {BlockFrame, Caution, Controls, FieldInput} from './frame'
 export function EmbedBlock({attributes, children, node, selected, focused}: BlockObjectRenderProps) {
   const url = typeof node.url === 'string' ? node.url : ''
   return (
-    <BlockFrame {...attributes} $selected={selected}>
+    <BlockFrame {...attributes} data-calm-block={node._key} $selected={selected}>
       {children}
       {url ? (
         <EmbedCard blockKey={node._key} url={url} caption={node.caption} />
@@ -41,6 +41,7 @@ function EmbedLinkPrompt({blockKey, autoFocus}: {blockKey: string; autoFocus: bo
            
           autoFocus={autoFocus}
           aria-label="Embed link"
+          data-calm-field={`${blockKey}.url`}
           placeholder="Paste a YouTube, Vimeo or Spotify link"
           value={draft}
           onChange={(event) => {

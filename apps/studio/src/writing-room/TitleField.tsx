@@ -66,6 +66,7 @@ export function TitleField({
       value={title ?? ''}
       placeholder="Title"
       aria-label="Title"
+      data-calm-field="title"
       spellCheck
       onChange={(event) => setTitle(event.currentTarget.value)}
       onKeyDown={handleKeyDown}
