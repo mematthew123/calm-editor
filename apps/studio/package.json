@@ -11,12 +11,18 @@
     "dev": "sanity dev",
     "start": "sanity start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
+    "@calm/tokens": "workspace:*",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@sanity/icons": "^5.3.0",
+    "@sanity/themer": "^0.10.6",
     "@sanity/vision": "^6.22.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -28,7 +34,8 @@
     "@types/react": "^19.2.14",
     "eslint": "^10.8.1",
     "prettier": "^3.5",
-    "typescript": "~6.0"
+    "typescript": "~6.0",
+    "vitest": "^5.1.0"
   },
   "prettier": {
     "bracketSpacing": false,
