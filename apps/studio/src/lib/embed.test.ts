@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {parseEmbedUrl} from './embed'
+import {embedPlayerUrl, parseEmbedUrl} from './embed'
 
 describe('parseEmbedUrl', () => {
   it.each([
@@ -40,5 +40,15 @@ describe('parseEmbedUrl', () => {
     '',
   ])('rejects unsupported links: %s', (url) => {
     expect(parseEmbedUrl(url)).toBeNull()
+  })
+})
+
+describe('embedPlayerUrl', () => {
+  it.each([
+    [{provider: 'youtube', id: 'dQw4w9WgXcQ'}, 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+    [{provider: 'vimeo', id: '76979871'}, 'https://player.vimeo.com/video/76979871?dnt=1'],
+    [{provider: 'spotify', id: 'track/4uLU6hMCjMI75M1A2tKUQC'}, 'https://open.spotify.com/embed/track/4uLU6hMCjMI75M1A2tKUQC'],
+  ] as const)('%o → %s', (embed, url) => {
+    expect(embedPlayerUrl(embed)).toBe(url)
   })
 })

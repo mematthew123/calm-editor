@@ -23,6 +23,30 @@ importers:
       '@fontsource-variable/newsreader':
         specifier: ^5.3.0
         version: 5.3.0
+      '@portabletext/editor':
+        specifier: ^8.2.12
+        version: 8.2.12(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/plugin-input-rule':
+        specifier: ^7.0.26
+        version: 7.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/plugin-markdown-shortcuts':
+        specifier: ^9.0.26
+        version: 9.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/plugin-paste-link':
+        specifier: ^5.0.25
+        version: 5.0.25(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
+      '@portabletext/plugin-sdk-value':
+        specifier: ^8.1.20
+        version: 8.1.20(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@sanity/sdk-react@3.12.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))(xstate@5.33.3))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@portabletext/plugin-typeahead-picker':
+        specifier: ^7.0.26
+        version: 7.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/sanity-bridge':
+        specifier: ^5.0.0
+        version: 5.0.0(@types/react@19.3.0)(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))
+      '@portabletext/toolbar':
+        specifier: ^9.0.26
+        version: 9.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
       '@sanity/icons':
         specifier: ^5.3.0
         version: 5.3.0(react@19.3.1)
@@ -1815,6 +1839,15 @@ packages:
       '@portabletext/editor': ^8.2.12
       react: ^19.2
 
+  '@portabletext/plugin-sdk-value@8.1.20':
+    resolution: {integrity: sha512-o7pcGDPxmt0b661QPzmDbgGhIRH96tBsOpPf2EpWZgXnGyBDdRGxF2NrvJ2Pt3MFl+yaMuwF+oQa/cfqDp1g3w==}
+    engines: {node: '>=22.12'}
+    peerDependencies:
+      '@portabletext/editor': ^8.2.12
+      '@sanity/sdk-react': ^2.20.1 || ^3
+      react: ^19.2
+      react-dom: ^19.2
+
   '@portabletext/plugin-table@2.0.25':
     resolution: {integrity: sha512-zeI5IR5NmuajWSq9LhlKMdNlZgvi6dUbRgAdJcOFcynQaQuO+RnZB7IwebQMSYm/82YuNbMIKT2fg2l4WUppFw==}
     engines: {node: '>=22.12'}
@@ -1822,6 +1855,13 @@ packages:
       '@portabletext/editor': ^8.2.12
       react: ^19.2
       react-dom: ^19.2
+
+  '@portabletext/plugin-typeahead-picker@7.0.26':
+    resolution: {integrity: sha512-5iEifxWKrt0hj+b0/bbUMDO8pqrnOLZllNPYWhWMMSkPTP3FUZhJ8FbDgJwjgVAmSTvwZR5jFMteuTrfSrQCwQ==}
+    engines: {node: '>=22.12'}
+    peerDependencies:
+      '@portabletext/editor': ^8.2.12
+      react: ^19.2
 
   '@portabletext/plugin-typography@9.0.26':
     resolution: {integrity: sha512-ZMnuNI2NhZdFeIzOhdfrTEgFQpewOvZh55cLL5n2ifI5Ie9OSKNkloeA/oPS0cV4GoHo3fndgAhEu8HkKkgWLQ==}
@@ -1844,6 +1884,10 @@ packages:
     resolution: {integrity: sha512-6SL23FqPqoX90fc6jITEB3eYm3VYnZ6oERkQM++apTemi5KVuM7TdMPxWtnc7i9wmIYysdN6QDzVI1Vl/DVzkw==}
     engines: {node: '>=22.12'}
 
+  '@portabletext/sanity-bridge@5.0.0':
+    resolution: {integrity: sha512-t+SLh3olBGXpmNXlOFwoT8/njYo3nCOnzO53l1olD9PWZB+DYicTMhZRax0AJ59FHM2TxuJVglM6YX+8ABlQLQ==}
+    engines: {node: '>=22.12'}
+
   '@portabletext/schema@3.1.0':
     resolution: {integrity: sha512-Th8x0I21GDDv+yQEqF1w/G9iuyLkFdUM424VSSCCdZRSnfor2m23m+GFdf3pVTte6TPOzu4Ku89FwqyRRJ2vxQ==}
     engines: {node: '>=22.12'}
@@ -1851,6 +1895,13 @@ packages:
   '@portabletext/to-html@6.0.0':
     resolution: {integrity: sha512-kMqr55pJDBsIyOHLeVccFMFfJxSdozS+A1TeYhiihIinSDhb6ibUxpQIpg0B1n54vZJJW8rDs+QayP3vQqLKUg==}
     engines: {node: '>=22.12'}
+
+  '@portabletext/toolbar@9.0.26':
+    resolution: {integrity: sha512-HDaPcyVGAzk24Br4kVO7bmjRY2nkORGFZaU0+CAhnzTvsacFlIpcykS42gIzlvtMv9mGHOVyzVjmZ810az+XTA==}
+    engines: {node: '>=22.12'}
+    peerDependencies:
+      '@portabletext/editor': ^8.2.12
+      react: ^19.3.1
 
   '@portabletext/toolkit@6.0.0':
     resolution: {integrity: sha512-+qSqe0KnefuZfNLUhzQRTpbSKxslZof+3pNwxg0DC8dfZ1yLKyyBUw6iR7EpDL+SJlrnpiBfEcfmEuFitK1NSQ==}
@@ -2113,6 +2164,10 @@ packages:
   '@sanity/diff-match-patch@3.2.1':
     resolution: {integrity: sha512-Ll3BPOn9aPGeBUOFDZpKk0IObL+NI4tNq7VyOKj680xd+iCtfjnbcZZU0vpj94XozVGE0Zf+0FoYWXk2xJgZCg==}
     engines: {node: '>=18.18'}
+
+  '@sanity/diff-patch@6.0.0':
+    resolution: {integrity: sha512-oJ5kZQV6C/DAlcpRLEU7AcVWXrSPuJb3Z1TQ9tm/qZOVWJENwWln45jtepQEYolTIuGx9jUlhYUi3hGIkOt8RA==}
+    engines: {node: '>=18.2'}
 
   '@sanity/diff-patch@7.0.0':
     resolution: {integrity: sha512-e/xGFPWtDN5ZafxtG/DcP4URBk3EPblR+Ett1pT3AmiViNLPkHfwnG/Jj4+DlHkvcKTSw6jebuGVEFkumAxHQg==}
@@ -8227,6 +8282,22 @@ snapshots:
       '@portabletext/editor': 8.2.12(@types/react@19.3.0)(react@19.3.1)
       react: 19.3.1
 
+  '@portabletext/plugin-sdk-value@8.1.20(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@sanity/sdk-react@3.12.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))(xstate@5.33.3))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+    dependencies:
+      '@portabletext/editor': 8.2.12(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/patches': 3.0.4
+      '@sanity/diff-match-patch': 3.2.1
+      '@sanity/diff-patch': 6.0.0
+      '@sanity/json-match': 1.0.5
+      '@sanity/sdk-react': 3.12.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))(xstate@5.33.3)
+      '@xstate/react': 6.1.0(@types/react@19.3.0)(react@19.3.1)(xstate@5.33.3)
+      obug: 3.0.0
+      react: 19.3.1
+      react-dom: 19.3.1(react@19.3.1)
+      xstate: 5.33.3
+    transitivePeerDependencies:
+      - '@types/react'
+
   '@portabletext/plugin-table@2.0.25(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@floating-ui/dom': 1.8.0
@@ -8234,6 +8305,17 @@ snapshots:
       '@portabletext/keyboard-shortcuts': 3.0.0
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
+
+  '@portabletext/plugin-typeahead-picker@7.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)':
+    dependencies:
+      '@portabletext/editor': 8.2.12(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/keyboard-shortcuts': 3.0.0
+      '@portabletext/plugin-input-rule': 7.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
+      '@xstate/react': 6.1.0(@types/react@19.3.0)(react@19.3.1)(xstate@5.33.3)
+      react: 19.3.1
+      xstate: 5.33.3
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@portabletext/plugin-typography@9.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)':
     dependencies:
@@ -8263,12 +8345,30 @@ snapshots:
       - '@types/react'
       - vitest
 
+  '@portabletext/sanity-bridge@5.0.0(@types/react@19.3.0)(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))':
+    dependencies:
+      '@portabletext/schema': 3.1.0
+      '@sanity/types': 6.22.0(@types/react@19.3.0)(vitest@5.1.0(jsdom@29.1.1(@noble/hashes@2.4.0))(vite@8.3.6(jiti@2.7.0)(yaml@2.9.1)))
+    transitivePeerDependencies:
+      - '@types/react'
+      - vitest
+
   '@portabletext/schema@3.1.0': {}
 
   '@portabletext/to-html@6.0.0':
     dependencies:
       '@portabletext/toolkit': 6.0.0
       '@portabletext/types': 4.0.2
+
+  '@portabletext/toolbar@9.0.26(@portabletext/editor@8.2.12(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)':
+    dependencies:
+      '@portabletext/editor': 8.2.12(@types/react@19.3.0)(react@19.3.1)
+      '@portabletext/keyboard-shortcuts': 3.0.0
+      '@xstate/react': 6.1.0(@types/react@19.3.0)(react@19.3.1)(xstate@5.33.3)
+      react: 19.3.1
+      xstate: 5.33.3
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@portabletext/toolkit@6.0.0':
     dependencies:
@@ -8642,6 +8742,10 @@ snapshots:
       sha256-uint8array: 0.10.7
 
   '@sanity/diff-match-patch@3.2.1': {}
+
+  '@sanity/diff-patch@6.0.0':
+    dependencies:
+      '@sanity/diff-match-patch': 3.2.1
 
   '@sanity/diff-patch@7.0.0':
     dependencies:

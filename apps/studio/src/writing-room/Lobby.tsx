@@ -1,12 +1,16 @@
 import {AddIcon} from '@sanity/icons/Add'
 import {ArrowLeftIcon} from '@sanity/icons/ArrowLeft'
 import {ArrowRightIcon} from '@sanity/icons/ArrowRight'
-import {type DocumentHandle, useDocumentProjection, useDocuments} from '@sanity/sdk-react'
-import {Suspense, useRef} from 'react'
+import {
+  type DocumentHandle,
+  useCreateDocument,
+  useDocumentProjection,
+  useDocuments,
+} from '@sanity/sdk-react'
+import {Suspense, useRef, useState} from 'react'
 import {useCurrentUser} from 'sanity'
 import {StateLink, useRouter} from 'sanity/router'
 import styled from 'styled-components'
-import {NEW_POST} from './constants'
 import {useAllPostsPath, useLeaveToStudio} from './navigation'
 import {describePostStatus, timeAgo} from './post-status'
 import {Column, Placeholder, QuietButton, RoomControls, SectionLabel} from './primitives'
@@ -104,8 +108,22 @@ const StartButton = styled.button`
 
 function StartNewPost() {
   const router = useRouter()
+  const createPost = useCreateDocument({documentType: 'post'})
+  const [isCreating, setIsCreating] = useState(false)
+
+  async function start() {
+    if (isCreating) return
+    setIsCreating(true)
+    try {
+      const post = await createPost()
+      router.navigate({postId: post.documentId})
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   return (
-    <StartButton type="button" onClick={() => router.navigate({postId: NEW_POST})}>
+    <StartButton type="button" onClick={start} aria-busy={isCreating}>
       <AddIcon aria-hidden />
       Start a new Post
     </StartButton>

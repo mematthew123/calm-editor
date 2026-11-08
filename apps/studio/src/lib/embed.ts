@@ -53,3 +53,15 @@ export function parseEmbedUrl(input: string): ParsedEmbed | null {
 
   return null
 }
+
+/** The privacy-friendly player url for an Embed, used for the opt-in Preview. */
+export function embedPlayerUrl({provider, id}: ParsedEmbed): string {
+  switch (provider) {
+    case 'youtube':
+      return `https://www.youtube-nocookie.com/embed/${id}`
+    case 'vimeo':
+      return `https://player.vimeo.com/video/${id}?dnt=1`
+    case 'spotify':
+      return `https://open.spotify.com/embed/${id}`
+  }
+}
