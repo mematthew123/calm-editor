@@ -20,6 +20,7 @@ import {
   pickImageBehavior,
 } from './behaviors'
 import {InsertMenu} from './InsertMenu'
+import {LinkPopover} from './LinkPopover'
 import {nodes} from './nodes'
 import {SelectionBubble} from './SelectionBubble'
 
@@ -94,6 +95,7 @@ export function BodyEditor({
         renderPlaceholder={() => <Placeholder>Start writing…</Placeholder>}
       />
       <SelectionBubble scheme={scheme} editorFocused={focused} />
+      <LinkPopover scheme={scheme} editorFocused={focused} />
       <InsertMenu scheme={scheme} editorFocused={focused} />
       <input
         ref={fileInput}
