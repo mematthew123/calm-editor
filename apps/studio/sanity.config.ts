@@ -7,6 +7,7 @@ import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 import {withPostDetailsOnPublish} from './src/actions/publish-post'
 import {theme} from './src/theme'
+import {writingRoom} from './src/writing-room'
 
 export default defineConfig({
   name: 'default',
@@ -15,7 +16,7 @@ export default defineConfig({
   projectId: '3x95lfwz',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool(), writingRoom(), visionTool()],
 
   theme,
 
