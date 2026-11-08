@@ -1,0 +1,14 @@
+{
+  "name": "calm-editor",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck"
+  },
+  "packageManager": "pnpm@11.18.0",
+  "devDependencies": {
+    "turbo": "^2.11.10"
+  }
+}

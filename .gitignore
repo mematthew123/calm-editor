@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Turborepo
+.turbo
+
+# Next.js (apps/web)
+.next/
+out/
+next-env.d.ts
+
+# Sanity (apps/studio)
+.sanity
+dist
+
+# Build output
+build
+
+# Testing
+coverage
+
+# Env files (commit .env.example only)
+.env*
+!.env.example
+
+# Deployment
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Misc
+.DS_Store
+*.pem
+
+# Editors / local tooling
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.claude/settings.local.json
