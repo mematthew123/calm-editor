@@ -46,7 +46,7 @@ export function parseEmbedUrl(input: string): ParsedEmbed | null {
   if (host === 'vimeo.com' || host === 'player.vimeo.com') {
     const index = segments.findIndex((segment) => /^\d+$/.test(segment))
     if (index === -1) return null
-    const id = segments[index]!
+    const id = segments[index]
     // Unlisted videos carry a hash: `vimeo.com/ID/HASH` when shared, `?h=HASH` on player links.
     const hash = url.searchParams.get('h') ?? segments[index + 1]
     return hash && VIMEO_HASH.test(hash) ? {provider: 'vimeo', id, hash} : {provider: 'vimeo', id}
