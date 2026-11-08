@@ -1,5 +1,5 @@
 import {defineField, type SlugIsUniqueValidator} from 'sanity'
-import {type WritingKind} from '@calm/content'
+import {SEO_LIMITS, seoLengthAdvice, type WritingKind} from '@calm/content'
 import {API_VERSION} from '../../src/lib/api-version'
 
 /**
@@ -19,6 +19,7 @@ const isUniqueOncePublished: SlugIsUniqueValidator = async (slug, context) => {
 export const WRITING_GROUPS = [
   {name: 'prose', title: 'Prose', default: true},
   {name: 'details', title: 'Details'},
+  {name: 'seo', title: 'SEO'},
 ]
 
 /** Prose: what the Writer composes in the Writing Room. Only these may block publishing. */
@@ -100,6 +101,39 @@ export function sharedDetailFields(kind: WritingKind) {
       of: [{type: 'string'}],
       options: {layout: 'tags'},
       validation: (rule) => rule.unique(),
+    }),
+  ]
+}
+
+/**
+ * SEO: how the piece reads in search results and social cards, when that should differ from its
+ * title and excerpt. Optional like every Detail, and length advice is only a warning, so these
+ * never block a publish from the Writing Room (which can't show them).
+ */
+export function seoFields(
+  kind: WritingKind,
+  {titleFallback = `the ${kind.singular}’s title`}: {titleFallback?: string} = {},
+) {
+  const {title, description} = SEO_LIMITS
+  return [
+    defineField({
+      name: 'seoTitle',
+      title: 'SEO title',
+      type: 'string',
+      group: 'seo',
+      description: `The title in search results and social cards. Leave empty to use ${titleFallback}. Aim for ${title.min}–${title.max} characters.`,
+      validation: (rule) =>
+        rule.custom((value?: string) => seoLengthAdvice('title', value) ?? true).warning(),
+    }),
+    defineField({
+      name: 'seoDescription',
+      title: 'SEO description',
+      type: 'text',
+      rows: 3,
+      group: 'seo',
+      description: `The summary under the title in search results. Leave empty to use the excerpt (or the opening of the ${kind.singular}). Aim for ${description.min}–${description.max} characters.`,
+      validation: (rule) =>
+        rule.custom((value?: string) => seoLengthAdvice('description', value) ?? true).warning(),
     }),
   ]
 }

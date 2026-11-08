@@ -4,6 +4,7 @@ import {WRITING_KINDS} from '@calm/content'
 import {
   proseFields,
   PUBLISHED_AT_DESC,
+  seoFields,
   sharedDetailFields,
   slugField,
   WRITING_GROUPS,
@@ -52,6 +53,7 @@ export const caseStudy = defineType({
           ? {...field, title: 'Hero image'}
           : field,
     ),
+    ...seoFields(WRITING_KINDS.caseStudy, {titleFallback: '“<Client> Case Study”'}),
   ],
   orderings: [PUBLISHED_AT_DESC],
   preview: {

@@ -4,6 +4,7 @@ import {WRITING_KINDS} from '@calm/content'
 import {
   proseFields,
   PUBLISHED_AT_DESC,
+  seoFields,
   sharedDetailFields,
   slugField,
   WRITING_GROUPS,
@@ -25,6 +26,7 @@ export const post = defineType({
     ...proseFields(WRITING_KINDS.post),
     slugField(WRITING_KINDS.post),
     ...sharedDetailFields(WRITING_KINDS.post),
+    ...seoFields(WRITING_KINDS.post),
   ],
   orderings: [PUBLISHED_AT_DESC],
   preview: {
