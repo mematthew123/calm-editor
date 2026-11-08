@@ -15,8 +15,8 @@ export interface PublishDetails {
 }
 
 /**
- * The Details a Post needs filled in as it's published, so publishing only ever requires Prose
- * (docs/adr/0002-only-prose-is-required-to-publish.md). On the first publish the slug is settled
+ * The Details a Post needs filled in as it's published, so publishing only ever requires Prose.
+ * On the first publish the slug is settled
  * (derived from the title if missing, falling back to `post` when the title has no Latin letters
  * or digits, and made unique on a clash) and then stays put; the published date is stamped if empty.
  */

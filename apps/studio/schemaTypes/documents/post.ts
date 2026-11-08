@@ -18,8 +18,10 @@ const isUniqueOncePublished: SlugIsUniqueValidator = async (slug, context) => {
 
 /**
  * A Post. Only Prose (title, body) may block publishing; every Detail is optional
- * and the Reading Site supplies a fallback. Read docs/adr/0002-only-prose-is-required-to-publish.md
- * before adding required validation to anything in the `details` group.
+ * and the Reading Site supplies a fallback. Writers publish from the Writing Room, which can't
+ * show Details, so a required Detail would block a publish they can't fix from where they are.
+ * Don't add required validation to anything in the `details` group without giving the room a
+ * way to resolve it in place.
  */
 export const post = defineType({
   name: 'post',
