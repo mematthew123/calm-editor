@@ -1,5 +1,20 @@
 import {DocumentTextIcon} from '@sanity/icons/DocumentText'
-import {defineField, defineType} from 'sanity'
+import {defineField, defineType, type SlugIsUniqueValidator} from 'sanity'
+import {API_VERSION} from '../../src/lib/api-version'
+
+/**
+ * Until a Post's first publish its slug follows the title, and publishing settles any clash
+ * (`notes` → `notes-2`), so a clash isn't an error yet. Flagging it would disable Publish before
+ * that settling could run. Once published, the slug stays put and must be unique.
+ */
+const isUniqueOncePublished: SlugIsUniqueValidator = async (slug, context) => {
+  const id = context.document?._id.replace(/^(drafts|versions\.[^.]+)\./, '')
+  if (!id) return context.defaultIsUnique(slug, context)
+  const isPublished = await context
+    .getClient({apiVersion: API_VERSION})
+    .fetch<boolean>('defined(*[_id == $id][0]._id)', {id})
+  return isPublished ? context.defaultIsUnique(slug, context) : true
+}
 
 /**
  * A Post. Only Prose (title, body) may block publishing; every Detail is optional
@@ -31,7 +46,7 @@ export const post = defineType({
       type: 'slug',
       group: 'details',
       description: 'Follows the title until the Post is first published, then stays put.',
-      options: {source: 'title', maxLength: 96},
+      options: {source: 'title', maxLength: 96, isUnique: isUniqueOncePublished},
     }),
     defineField({
       name: 'excerpt',

@@ -40,4 +40,16 @@ describe('detailsForPublish', () => {
       await detailsForPublish({post: {title: 'Hello', publishedAt: NOW}, isFirstPublish: false, isTaken: free, now: NOW}),
     ).toEqual({slug: {_type: 'slug', current: 'hello'}})
   })
+
+  it('falls back to a unique slug when the title can’t produce one', async () => {
+    const taken = new Set(['post'])
+    expect(
+      await detailsForPublish({
+        post: {title: '静かな朝'},
+        isFirstPublish: true,
+        isTaken: async (s) => taken.has(s),
+        now: NOW,
+      }),
+    ).toEqual({slug: {_type: 'slug', current: 'post-2'}, publishedAt: NOW})
+  })
 })

@@ -3,6 +3,17 @@ import {defineArrayMember, defineField, defineType, type PortableTextBlock} from
 
 const MAX_LIST_DEPTH = 2
 
+/** Whether a body has any words or objects, not just blank paragraphs. */
+function hasProse(blocks: PortableTextBlock[] | undefined): boolean {
+  return (blocks ?? []).some(
+    (block) =>
+      block._type !== 'block' ||
+      (Array.isArray(block.children) ? block.children : []).some(
+        (child) => typeof child.text === 'string' && child.text.trim() !== '',
+      ),
+  )
+}
+
 /** The body of a Post: the Prose a Writer composes in the Writing Room. */
 export const body = defineType({
   name: 'body',
@@ -74,7 +85,12 @@ export const body = defineType({
     defineArrayMember({type: 'sectionBreak'}),
   ],
   validation: (rule) => [
-    rule.required().error('Write something before publishing.'),
+    rule
+      .required()
+      .custom((blocks: PortableTextBlock[] | undefined) =>
+        blocks === undefined || hasProse(blocks) ? true : 'Write something before publishing.',
+      )
+      .error('Write something before publishing.'),
     rule.custom((blocks: PortableTextBlock[] | undefined) => {
       const tooDeep = blocks?.find(
         (block) => typeof block.level === 'number' && block.level > MAX_LIST_DEPTH,

@@ -17,9 +17,22 @@ describe('parseEmbedUrl', () => {
     ['https://vimeo.com/76979871', '76979871'],
     ['https://vimeo.com/channels/staffpicks/76979871', '76979871'],
     ['https://player.vimeo.com/video/76979871', '76979871'],
-    ['https://vimeo.com/76979871/abcdef1234', '76979871'],
   ])('recognises Vimeo: %s', (url, id) => {
     expect(parseEmbedUrl(url)).toEqual({provider: 'vimeo', id})
+  })
+
+  it.each([
+    ['https://vimeo.com/76979871/abcdef1234', 'abcdef1234'],
+    ['https://player.vimeo.com/video/76979871?h=abcdef1234', 'abcdef1234'],
+  ])('keeps the privacy hash of an unlisted Vimeo video: %s', (url, hash) => {
+    expect(parseEmbedUrl(url)).toEqual({provider: 'vimeo', id: '76979871', hash})
+  })
+
+  it('round-trips an unlisted Vimeo share link to a player url that keeps its hash', () => {
+    const embed = parseEmbedUrl('https://vimeo.com/76979871/abcdef1234')
+    expect(embed && embedPlayerUrl(embed)).toBe(
+      'https://player.vimeo.com/video/76979871?h=abcdef1234&dnt=1',
+    )
   })
 
   it.each([

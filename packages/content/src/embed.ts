@@ -4,6 +4,8 @@ export interface ParsedEmbed {
   provider: EmbedProvider
   /** Provider-specific id; for Spotify it includes the kind, e.g. `track/4uLU6…`. */
   id: string
+  /** Vimeo only: the privacy hash an unlisted video's player needs. */
+  hash?: string
 }
 
 export const EMBED_PROVIDER_NAMES: Record<EmbedProvider, string> = {
@@ -13,6 +15,7 @@ export const EMBED_PROVIDER_NAMES: Record<EmbedProvider, string> = {
 }
 
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/
+const VIMEO_HASH = /^[A-Za-z0-9]+$/
 const SPOTIFY_KINDS = new Set(['track', 'album', 'playlist', 'episode', 'show', 'artist'])
 
 /** Recognises a link to a supported Embed provider, or returns null. */
@@ -41,8 +44,12 @@ export function parseEmbedUrl(input: string): ParsedEmbed | null {
   }
 
   if (host === 'vimeo.com' || host === 'player.vimeo.com') {
-    const id = segments.find((segment) => /^\d+$/.test(segment))
-    return id ? {provider: 'vimeo', id} : null
+    const index = segments.findIndex((segment) => /^\d+$/.test(segment))
+    if (index === -1) return null
+    const id = segments[index]
+    // Unlisted videos carry a hash: `vimeo.com/ID/HASH` when shared, `?h=HASH` on player links.
+    const hash = url.searchParams.get('h') ?? segments[index + 1]
+    return hash && VIMEO_HASH.test(hash) ? {provider: 'vimeo', id, hash} : {provider: 'vimeo', id}
   }
 
   if (host === 'open.spotify.com') {
@@ -55,12 +62,14 @@ export function parseEmbedUrl(input: string): ParsedEmbed | null {
 }
 
 /** The privacy-friendly player url for an Embed, used for the opt-in Preview. */
-export function embedPlayerUrl({provider, id}: ParsedEmbed): string {
+export function embedPlayerUrl({provider, id, hash}: ParsedEmbed): string {
   switch (provider) {
     case 'youtube':
       return `https://www.youtube-nocookie.com/embed/${id}`
     case 'vimeo':
-      return `https://player.vimeo.com/video/${id}?dnt=1`
+      return hash
+        ? `https://player.vimeo.com/video/${id}?h=${hash}&dnt=1`
+        : `https://player.vimeo.com/video/${id}?dnt=1`
     case 'spotify':
       return `https://open.spotify.com/embed/${id}`
   }
