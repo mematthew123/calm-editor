@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {Suspense} from 'react'
 import {describePost, formatDate} from '@/lib/text'
-import {type FetchOptions, getFetchOptions, sanityFetch} from '@/sanity/live'
+import {type FetchOptions, getFetchOptions, POST_CACHE_TAG, sanityFetch} from '@/sanity/live'
 import {POST_INDEX_QUERY} from '@/sanity/queries'
 
 export default function Home() {
@@ -45,7 +45,12 @@ async function PostIndex() {
 
 async function getPostIndex({perspective, stega}: FetchOptions) {
   'use cache'
-  const {data} = await sanityFetch({query: POST_INDEX_QUERY, perspective, stega})
+  const {data} = await sanityFetch({
+    query: POST_INDEX_QUERY,
+    perspective,
+    stega,
+    tags: [POST_CACHE_TAG],
+  })
   return data
 }
 
