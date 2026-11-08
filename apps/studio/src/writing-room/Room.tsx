@@ -165,11 +165,12 @@ function Title({handle, isPublished}: {handle: DocumentHandle; isPublished: bool
 
 /**
  * Leave (or Esc) returns to the Lobby. A Post that was never published and is still completely
- * empty is discarded on the way out, so an abandoned "Start a new Post" leaves nothing behind.
+ * empty (Prose and Details alike) is discarded on the way out, so an abandoned "Start a new Post"
+ * leaves nothing behind.
  */
 function LeaveButton({handle, isPublished}: {handle: DocumentHandle; isPublished: boolean}) {
   const router = useRouter()
-  const {data: post} = useDocument<{title?: unknown; body?: unknown}>(handle)
+  const {data: post} = useDocument<Record<string, unknown>>(handle)
   const apply = useApplyDocumentActions()
 
   const leave = useCallback(() => {
