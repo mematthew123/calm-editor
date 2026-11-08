@@ -78,8 +78,15 @@ export function useViewportChanges(onChange: () => void) {
   }, [onChange])
 }
 
-/** The soft, raised surface shared by the Selection Bubble and the Insert Menu. */
+/**
+ * The soft, raised surface shared by the Selection Bubble and the Insert Menu. It never grows
+ * taller than the window, so `Floating`'s clamp always fits it; anything longer scrolls.
+ */
 export const FloatingSurface = styled.div<{$round?: boolean}>`
+  box-sizing: border-box;
+  max-height: calc(100dvh - ${EDGE * 2}px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--calm-space-xs);
   border-radius: ${({$round}) => ($round ? 'var(--calm-radius-pill)' : 'var(--calm-radius-large)')};
   background: var(--calm-color-surface);
