@@ -163,6 +163,14 @@ function Menu({
   keyboard?: {next: () => void; previous: () => void}
   empty?: boolean
 }) {
+  const activeId = commands[activeIndex]?.id
+
+  // Focus stays on the list (aria-activedescendant), so keep the active option in view ourselves
+  // when the menu is scrolled in a short window.
+  useLayoutEffect(() => {
+    if (activeId) document.getElementById(`calm-insert-${activeId}`)?.scrollIntoView({block: 'nearest'})
+  }, [activeId])
+
   return (
     <FloatingSurface>
       {empty ? (
@@ -171,7 +179,7 @@ function Menu({
         <List
           role="listbox"
           aria-label="Insert"
-          aria-activedescendant={`calm-insert-${commands[activeIndex]?.id}`}
+          aria-activedescendant={`calm-insert-${activeId}`}
           tabIndex={keyboard ? 0 : -1}
            
           autoFocus={!!keyboard}
