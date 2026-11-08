@@ -1,7 +1,13 @@
+import '@fontsource-variable/figtree'
+import '@fontsource-variable/newsreader'
+
+import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
-import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemaTypes'
+import {withPostDetailsOnPublish} from './src/actions/publish-post'
+import {theme} from './src/theme'
+import {writingRoom} from './src/writing-room'
 
 export default defineConfig({
   name: 'default',
@@ -10,9 +16,20 @@ export default defineConfig({
   projectId: '3x95lfwz',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool(), writingRoom(), visionTool()],
+
+  theme,
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, context) =>
+      context.schemaType === 'post'
+        ? prev.map((action) =>
+            action.action === 'publish' ? withPostDetailsOnPublish(action, context) : action,
+          )
+        : prev,
   },
 })
