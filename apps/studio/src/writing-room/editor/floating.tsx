@@ -6,8 +6,8 @@ const GAP = 8
 const EDGE = 12
 
 /**
- * Positions floating UI (the Selection Bubble, the Insert Menu) against a viewport rect:
- * above it when there's room, otherwise below, and always inside the window.
+ * Positions floating UI (the Selection Bubble, the Insert Menu) against a viewport rect: on the
+ * preferred side when there's room, otherwise the other side, and always inside the window.
  */
 export function Floating({
   anchor,
@@ -30,9 +30,12 @@ export function Floating({
     const el = ref.current
     if (!el) return
     const {width, height} = el.getBoundingClientRect()
-    const fitsAbove = anchor.top - height - GAP >= EDGE
-    const top =
-      placement === 'above' && fitsAbove ? anchor.top - height - GAP : anchor.bottom + GAP
+    const above = anchor.top - height - GAP
+    const below = anchor.bottom + GAP
+    const fitsAbove = above >= EDGE
+    const fitsBelow = below + height <= window.innerHeight - EDGE
+    const useAbove = placement === 'above' ? fitsAbove || !fitsBelow : fitsAbove && !fitsBelow
+    const top = Math.max(EDGE, Math.min(useAbove ? above : below, window.innerHeight - height - EDGE))
     const ideal = align === 'center' ? anchor.left + anchor.width / 2 - width / 2 : anchor.left
     const left = Math.min(Math.max(EDGE, ideal), window.innerWidth - width - EDGE)
     setPosition({top, left})
@@ -75,8 +78,15 @@ export function useViewportChanges(onChange: () => void) {
   }, [onChange])
 }
 
-/** The soft, raised surface shared by the Selection Bubble and the Insert Menu. */
+/**
+ * The soft, raised surface shared by the Selection Bubble and the Insert Menu. It never grows
+ * taller than the window, so `Floating`'s clamp always fits it; anything longer scrolls.
+ */
 export const FloatingSurface = styled.div<{$round?: boolean}>`
+  box-sizing: border-box;
+  max-height: calc(100dvh - ${EDGE * 2}px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--calm-space-xs);
   border-radius: ${({$round}) => ($round ? 'var(--calm-radius-pill)' : 'var(--calm-radius-large)')};
   background: var(--calm-color-surface);

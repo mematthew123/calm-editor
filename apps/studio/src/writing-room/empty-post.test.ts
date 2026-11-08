@@ -27,4 +27,28 @@ describe('isEmptyPost', () => {
   it('treats a missing document as empty', () => {
     expect(isEmptyPost(null)).toBe(true)
   })
+
+  it('ignores system fields and an empty slug', () => {
+    expect(
+      isEmptyPost({
+        _id: 'drafts.abc',
+        _type: 'post',
+        _rev: 'r',
+        _createdAt: '2026-11-07T00:00:00Z',
+        _updatedAt: '2026-11-07T00:00:00Z',
+        slug: {_type: 'slug', current: ''},
+        tags: [],
+      }),
+    ).toBe(true)
+  })
+
+  it.each([
+    ['an excerpt', {excerpt: 'A short note.'}],
+    ['a cover image', {coverImage: {_type: 'image', asset: {_type: 'reference', _ref: 'image-abc-1x1-jpg'}}}],
+    ['tags', {tags: ['slowness']}],
+    ['a hand-set slug', {slug: {_type: 'slug', current: 'notes'}}],
+    ['a published date', {publishedAt: '2026-01-01T00:00:00Z'}],
+  ])('is not empty when Details hold %s', (_, details) => {
+    expect(isEmptyPost(details)).toBe(false)
+  })
 })
