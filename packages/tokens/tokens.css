@@ -1,0 +1,86 @@
+/* Generated from @calm/tokens/src/index.ts. Do not edit by hand. */
+
+:root,
+[data-scheme='light'] {
+  color-scheme: light;
+  --calm-color-paper: #FAF7F2;
+  --calm-color-surface: #F2ECE3;
+  --calm-color-rule: #E7DFD4;
+  --calm-color-ink: #2E2823;
+  --calm-color-ink-muted: #6E645B;
+  --calm-color-ink-faint: #A3988C;
+  --calm-color-accent: #A8532F;
+  --calm-color-on-accent: #FAF7F2;
+  --calm-color-selection: rgba(168, 83, 47, 0.18);
+  --calm-color-caution: #8A5300;
+  --calm-color-floating-shadow: 0 1px 2px rgba(46, 40, 35, 0.06), 0 8px 24px rgba(46, 40, 35, 0.08);
+}
+
+:root {
+  --calm-font-prose: "Newsreader Variable", "Newsreader", Georgia, "Times New Roman", serif;
+  --calm-font-ui: "Figtree Variable", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --calm-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --calm-prose-size-small: 1.125rem;
+  --calm-prose-size-medium: 1.25rem;
+  --calm-prose-size-large: 1.375rem;
+  --calm-type-title: 2.25em;
+  --calm-type-heading: 1.5em;
+  --calm-type-subheading: 1.2em;
+  --calm-type-caption: 0.85em;
+  --calm-type-code: 0.85em;
+  --calm-type-prose-gap: 1em;
+  --calm-type-prose-leading: 1.65;
+  --calm-type-heading-leading: 1.25;
+  --calm-type-ui-size: 0.875rem;
+  --calm-type-ui-size-small: 0.8125rem;
+  --calm-weight-prose: 400;
+  --calm-weight-title: 500;
+  --calm-weight-heading: 600;
+  --calm-weight-ui: 450;
+  --calm-weight-ui-strong: 600;
+  --calm-space-xs: 0.25rem;
+  --calm-space-sm: 0.5rem;
+  --calm-space-md: 1rem;
+  --calm-space-lg: 1.5rem;
+  --calm-space-xl: 2.5rem;
+  --calm-space-xxl: 4rem;
+  --calm-measure: 38rem;
+  --calm-radius: 0.5rem;
+  --calm-radius-large: 0.875rem;
+  --calm-radius-pill: 999px;
+  --calm-motion-gentle: 200ms;
+  --calm-motion-recede: 700ms;
+  --calm-motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-scheme='dark'] {
+  color-scheme: dark;
+  --calm-color-paper: #1E1B18;
+  --calm-color-surface: #28241F;
+  --calm-color-rule: #35302A;
+  --calm-color-ink: #EDE6DB;
+  --calm-color-ink-muted: #ADA295;
+  --calm-color-ink-faint: #6F665C;
+  --calm-color-accent: #E39A78;
+  --calm-color-on-accent: #1E1B18;
+  --calm-color-selection: rgba(227, 154, 120, 0.24);
+  --calm-color-caution: #E5B567;
+  --calm-color-floating-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-scheme='light']) {
+    color-scheme: dark;
+    --calm-color-paper: #1E1B18;
+    --calm-color-surface: #28241F;
+    --calm-color-rule: #35302A;
+    --calm-color-ink: #EDE6DB;
+    --calm-color-ink-muted: #ADA295;
+    --calm-color-ink-faint: #6F665C;
+    --calm-color-accent: #E39A78;
+    --calm-color-on-accent: #1E1B18;
+    --calm-color-selection: rgba(227, 154, 120, 0.24);
+    --calm-color-caution: #E5B567;
+    --calm-color-floating-shadow: none;
+  }
+}

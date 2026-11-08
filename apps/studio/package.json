@@ -11,12 +11,30 @@
     "dev": "sanity dev",
     "start": "sanity start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "typegen": "sanity schemas extract --path schema.json && sanity typegen generate"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
+    "@calm/content": "workspace:*",
+    "@calm/tokens": "workspace:*",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@portabletext/editor": "^8.2.12",
+    "@portabletext/plugin-input-rule": "^7.0.26",
+    "@portabletext/plugin-markdown-shortcuts": "^9.0.26",
+    "@portabletext/plugin-paste-link": "^5.0.25",
+    "@portabletext/plugin-sdk-value": "^8.1.20",
+    "@portabletext/plugin-typeahead-picker": "^7.0.26",
+    "@portabletext/sanity-bridge": "^5.0.0",
+    "@portabletext/toolbar": "^9.0.26",
+    "@sanity/icons": "^5.3.0",
+    "@sanity/preview-url-secret": "^4.1.5",
+    "@sanity/sdk-react": "^3.12.0",
+    "@sanity/themer": "^0.10.6",
     "@sanity/vision": "^6.22.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -26,9 +44,11 @@
   "devDependencies": {
     "@sanity/eslint-config-studio": "^7",
     "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.3.0",
     "eslint": "^10.8.1",
     "prettier": "^3.5",
-    "typescript": "~6.0"
+    "typescript": "~6.0",
+    "vitest": "^5.1.0"
   },
   "prettier": {
     "bracketSpacing": false,

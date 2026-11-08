@@ -1,26 +1,215 @@
 @import "tailwindcss";
+@import "@calm/tokens/tokens.css";
 
+/*
+ * The Reading Site shares its typography and colour with the Writing Room (see DESIGN.md).
+ * Values come from @calm/tokens; this file only maps them into Tailwind and styles Prose.
+ */
+
+/* next/font loads the families under its own names. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --calm-font-prose: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --calm-font-ui: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-paper: var(--calm-color-paper);
+  --color-surface: var(--calm-color-surface);
+  --color-rule: var(--calm-color-rule);
+  --color-ink: var(--calm-color-ink);
+  --color-ink-muted: var(--calm-color-ink-muted);
+  --color-ink-faint: var(--calm-color-ink-faint);
+  --color-accent: var(--calm-color-accent);
+  --color-on-accent: var(--calm-color-on-accent);
+  --color-caution: var(--calm-color-caution);
+  --font-prose: var(--calm-font-prose);
+  --font-ui: var(--calm-font-ui);
+  --font-mono: var(--calm-font-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--calm-color-paper);
+  color: var(--calm-color-ink);
+  font-family: var(--calm-font-ui);
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: var(--calm-color-selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--calm-color-accent);
+  outline-offset: 2px;
+  border-radius: var(--calm-radius);
+}
+
+/* Prose: the same rhythm as the Writing Room. */
+.prose {
+  font-family: var(--calm-font-prose);
+  font-size: var(--calm-prose-size-medium);
+  font-weight: var(--calm-weight-prose);
+  line-height: var(--calm-type-prose-leading);
+  text-wrap: pretty;
+
+  & > * {
+    margin-block: 0 var(--calm-type-prose-gap);
+  }
+
+  & h2,
+  & h3 {
+    margin-top: calc(var(--calm-type-prose-gap) * 2);
+    font-weight: var(--calm-weight-heading);
+    line-height: var(--calm-type-heading-leading);
+    text-wrap: balance;
+  }
+
+  & h2 {
+    font-size: var(--calm-type-heading);
+  }
+
+  & h3 {
+    font-size: var(--calm-type-subheading);
+  }
+
+  & blockquote {
+    padding-inline-start: var(--calm-space-md);
+    border-inline-start: 2px solid var(--calm-color-accent);
+    color: var(--calm-color-ink-muted);
+  }
+
+  & strong {
+    font-weight: var(--calm-weight-heading);
+  }
+
+  & a {
+    color: var(--calm-color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  & ul,
+  & ol {
+    padding-inline-start: 1.5em;
+  }
+
+  & ul {
+    list-style: disc;
+  }
+
+  & ol {
+    list-style: decimal;
+  }
+
+  & li {
+    margin-bottom: calc(var(--calm-type-prose-gap) * 0.4);
+    padding-inline-start: 0.25em;
+  }
+
+  & li::marker {
+    color: var(--calm-color-ink-muted);
+  }
+
+  & li > ul {
+    list-style: circle;
+  }
+
+  & li > ol {
+    list-style: lower-alpha;
+  }
+
+  & li > ul,
+  & li > ol {
+    margin-top: calc(var(--calm-type-prose-gap) * 0.4);
+  }
+
+  & figure img {
+    border-radius: var(--calm-radius);
+  }
+
+  & figcaption {
+    margin-top: var(--calm-space-sm);
+    color: var(--calm-color-ink-muted);
+    font-size: var(--calm-type-caption);
+    font-style: italic;
+  }
+
+  & .embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: var(--calm-radius);
+  }
+
+  & .embed[data-provider="spotify"] iframe {
+    height: 152px;
+    aspect-ratio: auto;
+  }
+
+  & .code-block {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--calm-radius);
+    background: var(--calm-color-surface);
+  }
+
+  & .code-block figcaption {
+    position: absolute;
+    top: var(--calm-space-sm);
+    right: var(--calm-space-md);
+    margin: 0;
+    font-family: var(--calm-font-ui);
+    font-size: var(--calm-type-ui-size-small);
+    font-style: normal;
+  }
+
+  & .code-block pre {
+    overflow-x: auto;
+    padding: var(--calm-space-md);
+    font-family: var(--calm-font-mono);
+    font-size: var(--calm-type-code);
+    line-height: 1.6;
+    tab-size: 2;
+  }
+
+  & .section-break {
+    margin-block: var(--calm-space-xl);
+    border: 0;
+    text-align: center;
+
+    &::after {
+      content: "✦ ✦ ✦";
+      color: var(--calm-color-ink-faint);
+      letter-spacing: 0.5em;
+    }
+  }
+}
+
+/* Code highlighting: restrained, warm, and in step with light and dark. */
+:root {
+  --shiki-foreground: var(--calm-color-ink);
+  --shiki-background: transparent;
+  --shiki-token-keyword: var(--calm-color-accent);
+  --shiki-token-string: color-mix(in oklab, var(--calm-color-accent) 45%, var(--calm-color-ink));
+  --shiki-token-string-expression: var(--shiki-token-string);
+  --shiki-token-constant: var(--calm-color-caution);
+  --shiki-token-comment: var(--calm-color-ink-muted);
+  --shiki-token-function: var(--calm-color-ink);
+  --shiki-token-parameter: var(--calm-color-ink);
+  --shiki-token-punctuation: var(--calm-color-ink-muted);
+  --shiki-token-link: var(--calm-color-accent);
+  --shiki-token-inserted: var(--calm-color-ink);
+  --shiki-token-deleted: var(--calm-color-ink-muted);
+  --shiki-token-changed: var(--calm-color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
