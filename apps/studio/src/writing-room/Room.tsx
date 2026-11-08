@@ -18,6 +18,7 @@ import {isEmptyPost} from './empty-post'
 import {useOpenDetails} from './navigation'
 import {FullscreenToggle, RoomSettingsMenu, WordCount} from './comfort'
 import {describePostStatus} from './post-status'
+import {PreviewButton} from './PreviewButton'
 import {Column, Placeholder, QuietButton, Recedes, RoomControls} from './primitives'
 import {
   Presence,
@@ -77,7 +78,10 @@ function LoadedRoom({
 }) {
   const scheme = useColorSchemeValue()
   const schemaDefinition = useBodySchema()
-  const {data} = useDocumentProjection<{_id: string}>({...handle, projection: '{_id}'})
+  const {data} = useDocumentProjection<{_id: string; slug?: string}>({
+    ...handle,
+    projection: '{_id, "slug": slug.current}',
+  })
   const status = describePostStatus(data?._status)
   const isPublished = status.label !== 'Draft'
   const page = useRef<HTMLElement>(null)
@@ -128,6 +132,7 @@ function LoadedRoom({
               <RoomSettingsMenu scheme={scheme} />
               <ThemeToggle />
               <DetailsButton postId={handle.documentId} />
+              <PreviewButton slug={data?.slug} onProblem={onProblem} />
               <PublishButton
                 handle={handle}
                 status={status}

@@ -14,6 +14,11 @@
         ".next/**",
         "!.next/cache/**",
         "dist/**"
+      ],
+      "env": [
+        "SANITY_API_READ_TOKEN",
+        "NEXT_PUBLIC_*",
+        "SANITY_STUDIO_*"
       ]
     },
     "dev": {
