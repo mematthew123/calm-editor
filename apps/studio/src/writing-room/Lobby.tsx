@@ -11,15 +11,17 @@ import {Suspense, useRef, useState} from 'react'
 import {useCurrentUser} from 'sanity'
 import {StateLink, useRouter} from 'sanity/router'
 import styled from 'styled-components'
-import {useAllPostsPath, useLeaveToStudio} from './navigation'
+import {WRITING_KINDS, WRITING_TYPES, type WritingType, writingKind} from '@calm/content'
+import {useAllOfKindPath, useLeaveToStudio} from './navigation'
 import {describePostStatus, timeAgo} from './post-status'
 import {Column, Placeholder, QuietButton, RoomControls, SectionLabel} from './primitives'
+import {roomState} from './room-route'
 import {ThemeToggle} from './room-status'
 import {useEscape} from './use-escape'
 
 const RECENT_POSTS = 8
 
-/** The entrance to the Writing Room: start a new Post or pick up a recent one. */
+/** The entrance to the Writing Room: start a new Post or Case Study, or pick up recent work. */
 export function Lobby() {
   const leave = useLeaveToStudio()
   useEscape(leave)
@@ -36,14 +38,22 @@ export function Lobby() {
       />
       <Column as="main">
         <Greeting />
-        <StartNewPost />
-        <Recent aria-labelledby="recent-posts">
-          <SectionLabel id="recent-posts">Recent Posts</SectionLabel>
+        <StartButtons>
+          {WRITING_TYPES.map((type) => (
+            <StartNew key={type} documentType={type} />
+          ))}
+        </StartButtons>
+        <Recent aria-labelledby="recent-writing">
+          <SectionLabel id="recent-writing">Recent writing</SectionLabel>
           <Suspense fallback={<RecentPostsPlaceholder />}>
             <RecentPosts />
           </Suspense>
         </Recent>
-        <AllPostsLink />
+        <AllLinks>
+          {WRITING_TYPES.map((type) => (
+            <AllOfKindLink key={type} documentType={type} />
+          ))}
+        </AllLinks>
       </Column>
     </>
   )
@@ -108,17 +118,22 @@ const StartButton = styled.button`
   }
 `
 
-function StartNewPost() {
+const StartButtons = styled.div`
+  display: grid;
+  gap: var(--calm-space-sm);
+`
+
+function StartNew({documentType}: {documentType: WritingType}) {
   const router = useRouter()
-  const createPost = useCreateDocument({documentType: 'post'})
+  const create = useCreateDocument({documentType})
   const [isCreating, setIsCreating] = useState(false)
 
   async function start() {
     if (isCreating) return
     setIsCreating(true)
     try {
-      const post = await createPost()
-      router.navigate({postId: post.documentId})
+      const created = await create()
+      router.navigate(roomState(created.documentId, documentType))
     } finally {
       setIsCreating(false)
     }
@@ -127,7 +142,7 @@ function StartNewPost() {
   return (
     <StartButton type="button" onClick={start} aria-busy={isCreating}>
       <AddIcon aria-hidden />
-      Start a new Post
+      Start a new {WRITING_KINDS[documentType].singular}
     </StartButton>
   )
 }
@@ -151,13 +166,13 @@ const Empty = styled.p`
 
 function RecentPosts() {
   const {data} = useDocuments({
-    documentType: 'post',
+    documentType: WRITING_TYPES,
     batchSize: RECENT_POSTS,
     orderings: [{field: '_updatedAt', direction: 'desc'}],
   })
 
   if (data.length === 0) {
-    return <Empty>Nothing here yet. Your first Post is one click away.</Empty>
+    return <Empty>Nothing here yet. Your first Post or Case Study is one click away.</Empty>
   }
 
   return (
@@ -227,12 +242,14 @@ function PostRow(handle: DocumentHandle) {
   const ref = useRef<HTMLDivElement>(null)
   const {data} = useDocumentProjection<{title?: string}>({...handle, ref, projection: '{title}'})
   const status = describePostStatus(data?._status)
+  const kind = writingKind(handle.documentType)
 
   return (
     <div ref={ref}>
-      <RowLink state={{postId: handle.documentId}}>
+      <RowLink state={roomState(handle.documentId, kind.type)}>
         <RowTitle>{data?.title || 'Untitled'}</RowTitle>
         <RowMeta>
+          {kind.type !== 'post' && `${kind.singular} · `}
           {status.label}
           {status.lastEditedAt && ` · ${timeAgo(status.lastEditedAt)}`}
         </RowMeta>
@@ -241,11 +258,17 @@ function PostRow(handle: DocumentHandle) {
   )
 }
 
-const AllPosts = styled.a`
+const AllLinks = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--calm-space-lg);
+  margin-top: var(--calm-space-lg);
+`
+
+const AllOfKind = styled.a`
   display: inline-flex;
   align-items: center;
   gap: var(--calm-space-xs);
-  margin-top: var(--calm-space-lg);
   color: var(--calm-color-ink-muted);
   text-decoration: none;
 
@@ -260,11 +283,11 @@ const AllPosts = styled.a`
   }
 `
 
-function AllPostsLink() {
+function AllOfKindLink({documentType}: {documentType: WritingType}) {
   const {navigateUrl} = useRouter()
-  const path = useAllPostsPath()
+  const path = useAllOfKindPath(documentType)
   return (
-    <AllPosts
+    <AllOfKind
       href={path}
       onClick={(event) => {
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
@@ -272,8 +295,8 @@ function AllPostsLink() {
         navigateUrl({path})
       }}
     >
-      All Posts
+      All {WRITING_KINDS[documentType].plural}
       <ArrowRightIcon aria-hidden />
-    </AllPosts>
+    </AllOfKind>
   )
 }
