@@ -29,8 +29,6 @@ coverage
 # Env files (commit .env.example only)
 .env*
 !.env.example
-# Public, non-secret Studio build settings
-!apps/studio/.env.production
 
 # Deployment
 .vercel
