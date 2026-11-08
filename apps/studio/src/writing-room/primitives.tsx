@@ -106,7 +106,7 @@ export function QuietButton({
   icon: Icon,
   children,
   ...props
-}: {icon?: ComponentType; children: ReactNode} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: {icon?: ComponentType; children?: ReactNode} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <QuietButtonRoot type="button" {...props}>
       {Icon && <Icon aria-hidden />}

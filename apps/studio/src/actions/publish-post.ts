@@ -4,9 +4,8 @@ import {
   type SanityClient,
   useDocumentOperation,
 } from 'sanity'
+import {API_VERSION} from '../lib/api-version'
 import {slugify, uniqueSlug} from '../lib/slug'
-
-const API_VERSION = '2026-11-01'
 
 interface PostSnapshot {
   title?: unknown
