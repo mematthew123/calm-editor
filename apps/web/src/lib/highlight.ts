@@ -6,7 +6,7 @@ import {createJavaScriptRegexEngine} from 'shiki/engine/javascript'
 // light and dark mode with everything else.
 const theme = createCssVariablesTheme({name: 'calm', variablePrefix: '--shiki-', fontStyle: true})
 
-/** The Studio's Code Block languages (apps/studio/schemaTypes/objects/code-block.ts) → Shiki ids. */
+/** The Studio's Code Block languages (packages/writing-room/src/schema/objects/code-block.ts) → Shiki ids. */
 const LANGUAGES: Record<string, string> = {
   javascript: 'javascript',
   typescript: 'typescript',
