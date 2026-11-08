@@ -47,7 +47,8 @@ export function CodeBlock({attributes, children, node, selected, focused}: Block
           onChange={(event) => code.onChange(event.currentTarget.value)}
           onBlur={code.onBlur}
           onKeyDown={(event) => {
-            if (event.key === 'Tab') {
+            // Tab indents; Shift+Tab is left to the browser so keyboard users can always move out.
+            if (event.key === 'Tab' && !event.shiftKey && !event.altKey && !event.metaKey && !event.ctrlKey) {
               event.preventDefault()
               const el = event.currentTarget
               const {selectionStart, selectionEnd, value} = el

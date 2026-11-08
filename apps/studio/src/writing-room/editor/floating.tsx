@@ -6,8 +6,8 @@ const GAP = 8
 const EDGE = 12
 
 /**
- * Positions floating UI (the Selection Bubble, the Insert Menu) against a viewport rect:
- * above it when there's room, otherwise below, and always inside the window.
+ * Positions floating UI (the Selection Bubble, the Insert Menu) against a viewport rect: on the
+ * preferred side when there's room, otherwise the other side, and always inside the window.
  */
 export function Floating({
   anchor,
@@ -30,9 +30,12 @@ export function Floating({
     const el = ref.current
     if (!el) return
     const {width, height} = el.getBoundingClientRect()
-    const fitsAbove = anchor.top - height - GAP >= EDGE
-    const top =
-      placement === 'above' && fitsAbove ? anchor.top - height - GAP : anchor.bottom + GAP
+    const above = anchor.top - height - GAP
+    const below = anchor.bottom + GAP
+    const fitsAbove = above >= EDGE
+    const fitsBelow = below + height <= window.innerHeight - EDGE
+    const useAbove = placement === 'above' ? fitsAbove || !fitsBelow : fitsAbove && !fitsBelow
+    const top = Math.max(EDGE, Math.min(useAbove ? above : below, window.innerHeight - height - EDGE))
     const ideal = align === 'center' ? anchor.left + anchor.width / 2 - width / 2 : anchor.left
     const left = Math.min(Math.max(EDGE, ideal), window.innerWidth - width - EDGE)
     setPosition({top, left})
