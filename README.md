@@ -28,14 +28,14 @@ apps/
   web/         The Reading Site (Next.js 16, Tailwind CSS 4)
 packages/
   content/     Rules about Posts shared by both apps (e.g. parsing embed URLs)
-  tokens/      Design tokens, generated from DESIGN.md
+  tokens/      Design tokens (src/index.ts), mirrored in DESIGN.md
 ```
 
 It's a pnpm + Turborepo monorepo. `DESIGN.md` is the design system.
 
 ## Getting started
 
-You'll need Node 20.9+ (Node 22 recommended), pnpm 11 and a free [Sanity account](https://www.sanity.io/get-started).
+You'll need Node 22.12 or newer (Sanity Studio v6 requires it), pnpm 11 and a free [Sanity account](https://www.sanity.io/get-started).
 
 ### 1. Create a project
 
@@ -81,7 +81,7 @@ pnpm dev
 - Studio: <http://localhost:3333>. Open **Writing Room** from the navigation.
 - Reading Site: <http://localhost:3000>
 
-In your project's API settings, add `http://localhost:3000` as a CORS origin so the Reading Site can receive live updates. Add your production URL there too when you deploy.
+In your project's API settings, add `http://localhost:3000` as a CORS origin with **Allow credentials** turned on, so the Reading Site can receive live updates and read drafts while previewing. Add your production URL the same way when you deploy.
 
 ## Deploying
 
@@ -100,7 +100,7 @@ In your project's API settings, add `http://localhost:3000` as a CORS origin so 
 
 ## Making it yours
 
-- **Look and feel.** The colours and type scale live in `DESIGN.md`. `pnpm --filter @calm/tokens build` regenerates `packages/tokens/tokens.css`, which both apps use.
+- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which both apps use), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
 - **Content model.** `apps/studio/schemaTypes`. The Writing Room's editor reads the `body` type directly, so blocks you add there appear in the room. Give each new block a renderer in `src/writing-room/editor/nodes.tsx` and the Reading Site's `Prose` component.
 - **One rule to keep.** Only Prose (title, body, and alt text on body images) may *block* a publish, because the Writer can't fix anything else from inside the room. Every Detail is optional, or at most a warning, and the Reading Site supplies a fallback when one is empty.
 
