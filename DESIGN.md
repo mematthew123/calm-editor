@@ -195,7 +195,7 @@ Prose sizes are relative to the body size, which the Writer chooses in Room Sett
 A single centred column, the width of the measure, with generous space above the title (at least `xxl`) so the first line never feels crammed against the top of the window.
 
 - **Writing Room:** nothing but the column. Room Controls sit in the corners of the viewport, outside the column, so they never overlap Prose: Leave at top-start; sync status, word count and Room Settings at top-end; Publish at bottom-end or top-end depending on width. Presence ("Sam is here too") sits beside the sync status.
-- **Lobby:** the same column. "Start a new Post" first and largest, then a short list of recent Posts, then a quiet "All Posts →" link.
+- **Lobby:** the same column. "Start a new Post" and "Start a new Case Study" first and largest, then a short list of recent writing (Case Studies labelled as such), then quiet "All Posts →" and "All Case Studies →" links.
 - Prose blocks are separated by `prose-gap` (`1em`); headings get roughly double that above them and the standard gap below, so they belong to what follows.
 - Images, Embeds and Code Blocks stay within the measure. Nothing bleeds full-width in v1.
 - **Devices:** desktop and tablet are the target. On a phone the room still works but isn't optimised; the Lobby and Reading Site must be fully responsive.
@@ -248,7 +248,7 @@ Plain, warm, brief. Write like a considerate person sitting beside the Writer.
 - Say what happened and what to do, in that order: "This link isn't from YouTube, Vimeo or Spotify." not "Invalid URL."
 - Frame requirements as help: "Describe this image for people who can't see it."
 - Sentence case everywhere. No exclamation marks, no emoji, no "Oops".
-- Use the glossary's words (Post, Details, Writing Room), never their _Avoid_ alternatives.
+- Use the glossary's words (Post, Case Study, Details, Writing Room), never their _Avoid_ alternatives.
 - Reassure only when it's true and useful: "Your words are safe here" appears only when we're actually holding unsynced edits.
 
 ## Using the tokens in code

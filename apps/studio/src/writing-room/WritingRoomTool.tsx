@@ -6,15 +6,22 @@ import {useRouter} from 'sanity/router'
 import {Lobby} from './Lobby'
 import {Surface} from './primitives'
 import {Room} from './Room'
+import {openedDocument} from './room-route'
 
 export function WritingRoomTool() {
   const {state} = useRouter()
   const scheme = useColorSchemeValue()
-  const postId = typeof state.postId === 'string' ? state.postId : undefined
+  const opened = openedDocument(state)
 
   return (
     <Surface data-scheme={scheme} data-calm-surface="">
-      <Suspense fallback={null}>{postId ? <Room key={postId} postId={postId} /> : <Lobby />}</Suspense>
+      <Suspense fallback={null}>
+        {opened ? (
+          <Room key={opened.documentId} documentId={opened.documentId} documentType={opened.documentType} />
+        ) : (
+          <Lobby />
+        )}
+      </Suspense>
     </Surface>
   )
 }

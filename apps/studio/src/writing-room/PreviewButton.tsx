@@ -5,21 +5,31 @@ import {
 } from '@sanity/preview-url-secret/constants'
 import {useState} from 'react'
 import {useClient, useCurrentUser} from 'sanity'
+import {readingPath, type WritingType} from '@calm/content'
 import {API_VERSION} from '../lib/api-version'
 import {QuietButton} from './primitives'
 
 const READING_SITE_URL = process.env.SANITY_STUDIO_READING_SITE_URL || 'http://localhost:3000'
 
 /**
- * Opens the Post on the Reading Site exactly as readers will see it, unpublished changes
+ * Opens the Post or Case Study on the Reading Site exactly as readers will see it, unpublished changes
  * included. A one-hour preview secret lets the site switch itself into draft mode.
  */
-export function PreviewButton({slug, onProblem}: {slug: string | undefined; onProblem: (problem: string) => void}) {
+export function PreviewButton({
+  documentType,
+  slug,
+  onProblem,
+}: {
+  documentType: WritingType
+  slug: string | undefined
+  onProblem: (problem: string) => void
+}) {
   const client = useClient({apiVersion: API_VERSION})
   const user = useCurrentUser()
   const [opening, setOpening] = useState(false)
 
   if (!slug) return null
+  const path = readingPath(documentType, slug)
 
   async function preview() {
     // Open the tab now, while the click still counts, so popup blockers allow it.
@@ -30,7 +40,7 @@ export function PreviewButton({slug, onProblem}: {slug: string | undefined; onPr
       const {secret} = await createPreviewSecret(client, 'calm-editor/writing-room', window.location.origin, user?.id)
       const url = new URL('/api/draft-mode/enable', READING_SITE_URL)
       url.searchParams.set(urlSearchParamPreviewSecret, secret)
-      url.searchParams.set(urlSearchParamPreviewPathname, `/posts/${slug}`)
+      url.searchParams.set(urlSearchParamPreviewPathname, path)
       if (tab) tab.location.href = url.toString()
       else window.open(url, '_blank', 'noopener')
     } catch {

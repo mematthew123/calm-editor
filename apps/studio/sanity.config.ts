@@ -4,6 +4,7 @@ import '@fontsource-variable/newsreader'
 import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
+import {isWritingType} from '@calm/content'
 import {schemaTypes} from './schemaTypes'
 import {withPostDetailsOnPublish} from './src/actions/publish-post'
 import {dataset, projectId} from './src/lib/env'
@@ -27,7 +28,7 @@ export default defineConfig({
 
   document: {
     actions: (prev, context) =>
-      context.schemaType === 'post'
+      isWritingType(context.schemaType)
         ? prev.map((action) =>
             action.action === 'publish' ? withPostDetailsOnPublish(action, context) : action,
           )

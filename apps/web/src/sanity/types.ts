@@ -80,15 +80,18 @@ export type Body = Array<
     } & SectionBreak)
 >;
 
-export type Post = {
+export type CaseStudy = {
   _id: string;
-  _type: "post";
+  _type: "caseStudy";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
   title?: string;
   body?: Body;
   slug?: Slug;
+  client?: string;
+  service?: string;
+  summary?: string;
   excerpt?: string;
   coverImage?: {
     asset?: SanityImageAssetReference;
@@ -122,6 +125,28 @@ export type Slug = {
   _type: "slug";
   current?: string;
   source?: string;
+};
+
+export type Post = {
+  _id: string;
+  _type: "post";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  body?: Body;
+  slug?: Slug;
+  excerpt?: string;
+  coverImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  publishedAt?: string;
+  tags?: Array<string>;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -227,10 +252,11 @@ export type AllSanitySchemaTypes =
   | Embed
   | SanityImageAssetReference
   | Body
-  | Post
+  | CaseStudy
   | SanityImageCrop
   | SanityImageHotspot
   | Slug
+  | Post
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -367,6 +393,138 @@ export type POST_METADATA_QUERY_RESULT = {
   } | null;
 } | null;
 
+// Source: ../web/src/sanity/queries.ts
+// Variable: CASE_STUDY_INDEX_QUERY
+// Query: *[_type == "caseStudy" && defined(slug.current)]  | order(coalesce(publishedAt, _updatedAt) desc){  _id,  title,  client,  "slug": slug.current,  excerpt,  summary,  publishedAt}
+export type CASE_STUDY_INDEX_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  client: string | null;
+  slug: string | null;
+  excerpt: string | null;
+  summary: string | null;
+  publishedAt: string | null;
+}>;
+
+// Source: ../web/src/sanity/queries.ts
+// Variable: CASE_STUDY_SLUGS_QUERY
+// Query: *[_type == "caseStudy" && defined(slug.current)]{  "slug": slug.current}
+export type CASE_STUDY_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+}>;
+
+// Source: ../web/src/sanity/queries.ts
+// Variable: CASE_STUDY_QUERY
+// Query: *[_type == "caseStudy" && slug.current == $slug][0]{  _id,  title,  client,  service,  summary,  "slug": slug.current,  publishedAt,  tags,  coverImage{alt, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}},  body[]{    ...,    _type == "image" => {alt, caption, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}}  }}
+export type CASE_STUDY_QUERY_RESULT = {
+  _id: string;
+  title: string | null;
+  client: string | null;
+  service: string | null;
+  summary: string | null;
+  slug: string | null;
+  publishedAt: string | null;
+  tags: Array<string> | null;
+  coverImage: {
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+      } | null;
+    } | null;
+  } | null;
+  body: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?: "blockquote" | "h2" | "h3" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        _key: string;
+        _type: "codeBlock";
+        code?: string;
+        language?:
+          | "css"
+          | "html"
+          | "javascript"
+          | "python"
+          | "shell"
+          | "text"
+          | "typescript";
+      }
+    | {
+        _key: string;
+        _type: "embed";
+        url?: string;
+        caption?: string;
+      }
+    | {
+        asset: {
+          _id: string;
+          url: string | null;
+          metadata: {
+            lqip: string | null;
+            dimensions: {
+              width: number | null;
+              height: number | null;
+            } | null;
+          } | null;
+        } | null;
+        media?: unknown;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+        alt: string | null;
+        caption: string | null;
+        _type: "image";
+        _key: string;
+      }
+    | {
+        _key: string;
+        _type: "sectionBreak";
+        kind?: string;
+      }
+  > | null;
+} | null;
+
+// Source: ../web/src/sanity/queries.ts
+// Variable: CASE_STUDY_METADATA_QUERY
+// Query: *[_type == "caseStudy" && slug.current == $slug][0]{  title,  client,  excerpt,  summary,  publishedAt,  "slug": slug.current,  coverImage{alt, hotspot, crop, asset}}
+export type CASE_STUDY_METADATA_QUERY_RESULT = {
+  title: string | null;
+  client: string | null;
+  excerpt: string | null;
+  summary: string | null;
+  publishedAt: string | null;
+  slug: string | null;
+  coverImage: {
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+    asset: SanityImageAssetReference | null;
+  } | null;
+} | null;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
@@ -374,6 +532,10 @@ declare global {
     '*[_type == "post" && defined(slug.current)]{\n  "slug": slug.current\n}': POST_SLUGS_QUERY_RESULT;
     '*[_type == "post" && slug.current == $slug][0]{\n  _id,\n  title,\n  "slug": slug.current,\n  publishedAt,\n  tags,\n  coverImage{alt, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}},\n  body[]{\n    ...,\n    _type == "image" => {alt, caption, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}}\n  }\n}': POST_QUERY_RESULT;
     '*[_type == "post" && slug.current == $slug][0]{\n  title,\n  excerpt,\n  publishedAt,\n  "slug": slug.current,\n  "opening": pt::text(body[_type == "block" && style == "normal"][0...2]),\n  coverImage{alt, hotspot, crop, asset}\n}': POST_METADATA_QUERY_RESULT;
+    '*[_type == "caseStudy" && defined(slug.current)]\n  | order(coalesce(publishedAt, _updatedAt) desc){\n  _id,\n  title,\n  client,\n  "slug": slug.current,\n  excerpt,\n  summary,\n  publishedAt\n}': CASE_STUDY_INDEX_QUERY_RESULT;
+    '*[_type == "caseStudy" && defined(slug.current)]{\n  "slug": slug.current\n}': CASE_STUDY_SLUGS_QUERY_RESULT;
+    '*[_type == "caseStudy" && slug.current == $slug][0]{\n  _id,\n  title,\n  client,\n  service,\n  summary,\n  "slug": slug.current,\n  publishedAt,\n  tags,\n  coverImage{alt, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}},\n  body[]{\n    ...,\n    _type == "image" => {alt, caption, hotspot, crop, asset->{_id, url, metadata{lqip, dimensions{width, height}}}}\n  }\n}': CASE_STUDY_QUERY_RESULT;
+    '*[_type == "caseStudy" && slug.current == $slug][0]{\n  title,\n  client,\n  excerpt,\n  summary,\n  publishedAt,\n  "slug": slug.current,\n  coverImage{alt, hotspot, crop, asset}\n}': CASE_STUDY_METADATA_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

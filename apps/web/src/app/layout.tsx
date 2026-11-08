@@ -3,6 +3,7 @@ import {Figtree, Newsreader} from 'next/font/google'
 import {draftMode} from 'next/headers'
 import {Suspense} from 'react'
 import {DraftModeBanner} from '@/components/DraftModeBanner'
+import {SiteNav} from '@/components/SiteNav'
 import {SanityLive} from '@/sanity/live'
 import './globals.css'
 
@@ -31,6 +32,7 @@ export default function RootLayout({children}: LayoutProps<'/'>) {
   return (
     <html lang="en" className={`${newsreader.variable} ${figtree.variable} antialiased`}>
       <body className="min-h-dvh">
+        <SiteNav />
         {children}
         <Suspense fallback={null}>
           <LiveLayer />
