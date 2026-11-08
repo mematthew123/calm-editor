@@ -18,6 +18,13 @@ export const {sanityFetch, SanityLive} = defineLive({
   strict: true,
 })
 
+/**
+ * Every Post query also carries this tag, so a publish can be applied without a visitor online:
+ * the Sanity webhook calls /api/revalidate, which expires it. (`<SanityLive>` only revalidates
+ * from a browser that's connected when the change happens, and doesn't catch up afterwards.)
+ */
+export const POST_CACHE_TAG = 'post'
+
 export type FetchOptions = {perspective: LivePerspective; stega: false}
 
 /** Read outside `'use cache'`: drafts while previewing, published content otherwise. */
@@ -34,7 +41,13 @@ export async function sanityFetchStaticParams<const Q extends string>({
   params?: QueryParams
 }) {
   'use cache'
-  const {data} = await sanityFetch({query, params, perspective: 'published', stega: false})
+  const {data} = await sanityFetch({
+    query,
+    params,
+    perspective: 'published',
+    stega: false,
+    tags: [POST_CACHE_TAG],
+  })
   return data
 }
 
@@ -48,6 +61,6 @@ export async function sanityFetchMetadata<const Q extends string>({
   perspective: LivePerspective
 }) {
   'use cache'
-  const {data} = await sanityFetch({query, params, perspective, stega: false})
+  const {data} = await sanityFetch({query, params, perspective, stega: false, tags: [POST_CACHE_TAG]})
   return data
 }

@@ -9,6 +9,7 @@ import {urlFor} from '@/sanity/image'
 import {
   type FetchOptions,
   getFetchOptions,
+  POST_CACHE_TAG,
   sanityFetch,
   sanityFetchMetadata,
   sanityFetchStaticParams,
@@ -98,7 +99,13 @@ async function PostRoute({params}: Pick<PageProps<'/posts/[slug]'>, 'params'>) {
 
 async function getPost(slug: string, {perspective, stega}: FetchOptions) {
   'use cache'
-  const {data} = await sanityFetch({query: POST_QUERY, params: {slug}, perspective, stega})
+  const {data} = await sanityFetch({
+    query: POST_QUERY,
+    params: {slug},
+    perspective,
+    stega,
+    tags: [POST_CACHE_TAG],
+  })
   return data
 }
 
