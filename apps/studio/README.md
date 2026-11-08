@@ -1,9 +1,10 @@
-# Sanity Clean Content Studio
+# Studio
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+Sanity Studio v6, with the Writing Room in `src/writing-room`.
 
-Now you can do the following things:
+- `schemaTypes/` is the content model: a `post` document and its `body` (Portable Text with images, embeds, code blocks and section breaks).
+- `src/writing-room/` is the Writing Room Tool: the Lobby, the room, and its editor (built on `@portabletext/editor`, synced through the App SDK).
+- `src/actions/` wraps the built-in Publish so a Post published from the form gets the same slug and date as one published from the room.
+- `seed/` holds the sample Posts added by `pnpm seed`.
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+Copy `.env.example` to `.env.local`, then run `pnpm dev` from the repo root. See the [root README](../../README.md) for setup and deployment, including why auto-updates are off.

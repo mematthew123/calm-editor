@@ -7,8 +7,9 @@ import {RoomAwareNavbar} from './RoomAwareNavbar'
 import {WritingRoomTool} from './WritingRoomTool'
 
 /**
- * The Writing Room: a calm, full-screen space for writing a single Post.
- * See docs/adr/0001-writing-happens-in-a-dedicated-studio-tool.md and DESIGN.md.
+ * The Writing Room: a calm, full-screen space for writing a single Post. It's a Studio Tool
+ * rather than a custom input because only a Tool can take the whole screen; Details stay in
+ * the standard document form. See DESIGN.md.
  */
 export const writingRoom = definePlugin({
   name: 'calm-writing-room',
