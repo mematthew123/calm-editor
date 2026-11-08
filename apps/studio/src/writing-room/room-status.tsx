@@ -134,8 +134,9 @@ interface PostForPublish extends PublishablePost {
 const SETTLE_TIMEOUT_MS = 4000
 
 /**
- * Publish, from inside the room. Waits for the Writer's latest words to sync and validate; if
- * something blocks the publish, takes them straight to it instead of listing errors.
+ * Publish, from inside the room. Waits for the Writer's latest words to sync and validate (and
+ * gives up with a gentle retry if that takes too long); if something blocks the publish, takes
+ * them straight to it instead of listing errors.
  */
 export function PublishButton({
   handle,
@@ -167,7 +168,14 @@ export function PublishButton({
 
   useEffect(() => {
     if (phase !== 'checking') return
-    if (!(isSynced && !validation.isValidating) && !timedOut) return
+    if (!isSynced || validation.isValidating) {
+      // Never publish on stale sync or validation: the SDK's publish doesn't enforce the schema.
+      if (timedOut) {
+        setPhase('idle')
+        onProblem('Still saving your latest changes. Try publishing again in a moment.')
+      }
+      return
+    }
 
     const problems = publishProblems(validation.validation as Marker[])
     const [first, ...rest] = problems
