@@ -13,7 +13,7 @@ export function WritingRoomTool() {
   const postId = typeof state.postId === 'string' ? state.postId : undefined
 
   return (
-    <Surface data-scheme={scheme}>
+    <Surface data-scheme={scheme} data-calm-surface="">
       <Suspense fallback={null}>{postId ? <Room key={postId} postId={postId} /> : <Lobby />}</Suspense>
     </Surface>
   )

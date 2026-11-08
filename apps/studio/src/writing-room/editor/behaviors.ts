@@ -2,7 +2,7 @@ import {defineBehavior, effect, raise} from '@portabletext/editor/behaviors'
 import {getFocusTextBlock, isSelectionCollapsed} from '@portabletext/editor/selectors'
 import {isEmptyTextBlock} from '@portabletext/editor/utils'
 import {defineInputRule} from '@portabletext/plugin-input-rule'
-import {parseEmbedUrl} from '../../lib/embed'
+import {parseEmbedUrl} from '@calm/content'
 import {PICK_IMAGE_EVENT} from './commands'
 
 /** Enter on an empty heading or quote returns to a plain paragraph rather than repeating the style. */

@@ -1,5 +1,6 @@
 import {useEditor} from '@portabletext/editor'
 import {getFocusBlock} from '@portabletext/editor/selectors'
+import {useEditorSelector} from '@portabletext/editor'
 import {BehaviorPlugin, NodePlugin} from '@portabletext/editor/plugins'
 import {InputRulePlugin} from '@portabletext/plugin-input-rule'
 import {MarkdownShortcutsPlugin} from '@portabletext/plugin-markdown-shortcuts'
@@ -10,6 +11,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {useClient} from 'sanity'
 import styled from 'styled-components'
 import {API_VERSION} from '../../lib/api-version'
+import {useRoomSettings} from '../room-settings'
 import {
   codeFenceRule,
   exitStyleOnEmptyEnter,
@@ -46,6 +48,11 @@ export function BodyEditor({
     return () => subscriptions.forEach((subscription) => subscription.unsubscribe())
   }, [editor])
 
+  const [settings] = useRoomSettings()
+  useTypewriterScrolling(settings.typewriter && focused)
+  const focusKey = useEditorSelector(editor, (snapshot) => getFocusBlock(snapshot)?.node._key)
+  const dimming = settings.focusDimming && focused && focusKey
+
   const pickImage = useCallback(() => fileInput.current?.click(), [])
   const behaviors = useMemo(
     () => [
@@ -75,6 +82,9 @@ export function BodyEditor({
         linkObject={({props}) => ({_type: 'link', href: props.href})}
       />
       <PasteLinkPlugin />
+      {dimming && (
+        <style>{`[data-pt-editor] [data-calm-block]:not([data-calm-block="${CSS.escape(focusKey)}"]) { opacity: 0.35; }`}</style>
+      )}
       <Prose
         {...handle}
         path="body"
@@ -99,6 +109,29 @@ export function BodyEditor({
       />
     </>
   )
+}
+
+const TYPEWRITER_LINE = 0.4
+
+/**
+ * Typewriter scrolling: keeps the line being written at the same height (40% down the room),
+ * so the Writer's eyes don't drift to the bottom of the screen.
+ */
+function useTypewriterScrolling(enabled: boolean) {
+  const editor = useEditor()
+  useEffect(() => {
+    if (!enabled) return undefined
+    const keepLineInPlace = () => {
+      const caret = editor.dom.getSelectionRect(editor.getSnapshot())
+      const surface = editor.dom.getEditorElement?.()?.closest('[data-calm-surface]')
+      if (!caret || !surface) return
+      const target = surface.getBoundingClientRect().top + surface.clientHeight * TYPEWRITER_LINE
+      surface.scrollBy({top: caret.top - target})
+    }
+    const subscriptions = [editor.on('selection', keepLineInPlace), editor.on('mutation', keepLineInPlace)]
+    keepLineInPlace()
+    return () => subscriptions.forEach((subscription) => subscription.unsubscribe())
+  }, [editor, enabled])
 }
 
 /**
@@ -151,6 +184,16 @@ const Prose = styled(SDKPortableTextEditable)`
 
   & > * {
     margin-block: 0 var(--calm-type-prose-gap);
+  }
+
+  [data-calm-block] {
+    transition: opacity var(--calm-motion-recede) var(--calm-motion-easing);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-calm-block] {
+      transition: none;
+    }
   }
 
   h2,

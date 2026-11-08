@@ -1,6 +1,6 @@
 import {PlayIcon} from '@sanity/icons/Play'
 import {defineField, defineType} from 'sanity'
-import {EMBED_PROVIDER_NAMES, parseEmbedUrl} from '../../src/lib/embed'
+import {EMBED_PROVIDER_NAMES, parseEmbedUrl} from '@calm/content'
 
 export const embed = defineType({
   name: 'embed',

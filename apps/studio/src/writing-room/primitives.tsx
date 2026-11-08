@@ -1,4 +1,4 @@
-import {type ComponentType, type ReactNode} from 'react'
+import {type ComponentType, type ReactNode, type Ref} from 'react'
 import styled from 'styled-components'
 
 /**
@@ -147,7 +147,7 @@ export function QuietButton({
   icon: Icon,
   children,
   ...props
-}: {icon?: ComponentType; children?: ReactNode} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: {icon?: ComponentType; children?: ReactNode; ref?: Ref<HTMLButtonElement>} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <QuietButtonRoot type="button" {...props}>
       {Icon && <Icon aria-hidden />}

@@ -16,6 +16,7 @@ import {BodyEditor} from './editor/BodyEditor'
 import {useBodySchema} from './editor/schema'
 import {isEmptyPost} from './empty-post'
 import {useOpenDetails} from './navigation'
+import {FullscreenToggle, RoomSettingsMenu, WordCount} from './comfort'
 import {describePostStatus} from './post-status'
 import {Column, Placeholder, QuietButton, Recedes, RoomControls} from './primitives'
 import {
@@ -26,6 +27,7 @@ import {
   StatusLabel,
   ThemeToggle,
 } from './room-status'
+import {useRoomSettings} from './room-settings'
 import {TitleField} from './TitleField'
 import {useEscape} from './use-escape'
 import {useRecede} from './use-recede'
@@ -81,6 +83,7 @@ function LoadedRoom({
   const page = useRef<HTMLElement>(null)
   const receded = useRecede(page)
   const [notice, setNotice] = useState<RoomNotice | null>(null)
+  const [settings] = useRoomSettings()
 
   useEffect(() => {
     if (!notice) return undefined
@@ -95,6 +98,7 @@ function LoadedRoom({
         start={
           <Recedes>
             <LeaveButton handle={handle} isPublished={isPublished} />
+            <FullscreenToggle />
           </Recedes>
         }
         end={
@@ -116,8 +120,12 @@ function LoadedRoom({
                   )}
                 </Notice>
               ) : (
-                <StatusLabel status={status} />
+                <>
+                  <WordCount />
+                  <StatusLabel status={status} />
+                </>
               )}
+              <RoomSettingsMenu scheme={scheme} />
               <ThemeToggle />
               <DetailsButton postId={handle.documentId} />
               <PublishButton
@@ -130,7 +138,7 @@ function LoadedRoom({
           </>
         }
       />
-      <Page as="article" ref={page}>
+      <Page as="article" ref={page} $textSize={settings.textSize}>
         <Title handle={handle} isPublished={isPublished} />
         <BodyEditor handle={handle} scheme={scheme} onUploadFailed={onProblem} />
       </Page>
@@ -177,9 +185,9 @@ function DetailsButton({postId}: {postId: string}) {
   return <QuietButton onClick={openDetails}>Details</QuietButton>
 }
 
-const Page = styled(Column)`
+const Page = styled(Column)<{$textSize?: 'small' | 'medium' | 'large'}>`
   font-family: var(--calm-font-prose);
-  font-size: var(--calm-prose-size-medium);
+  font-size: ${({$textSize = 'medium'}) => `var(--calm-prose-size-${$textSize})`};
   font-weight: var(--calm-weight-prose);
   line-height: var(--calm-type-prose-leading);
 `
