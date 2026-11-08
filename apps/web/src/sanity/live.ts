@@ -19,11 +19,18 @@ export const {sanityFetch, SanityLive} = defineLive({
 })
 
 /**
- * Every Post query also carries this tag, so a publish can be applied without a visitor online:
- * the Sanity webhook calls /api/revalidate, which expires it. (`<SanityLive>` only revalidates
- * from a browser that's connected when the change happens, and doesn't catch up afterwards.)
+ * Every query carries the tag for the kind it reads, so a publish can be applied without a visitor
+ * online: the Sanity webhook calls /api/revalidate, which expires it. (`<SanityLive>` only
+ * revalidates from a browser that's connected when the change happens, and doesn't catch up.)
  */
 export const POST_CACHE_TAG = 'post'
+export const CASE_STUDY_CACHE_TAG = 'caseStudy'
+
+/** The cache tag for each document type the Reading Site shows. */
+export const CACHE_TAGS: Record<string, string> = {
+  post: POST_CACHE_TAG,
+  caseStudy: CASE_STUDY_CACHE_TAG,
+}
 
 export type FetchOptions = {perspective: LivePerspective; stega: false}
 
@@ -36,9 +43,11 @@ export async function getFetchOptions(): Promise<FetchOptions> {
 export async function sanityFetchStaticParams<const Q extends string>({
   query,
   params = {},
+  tag = POST_CACHE_TAG,
 }: {
   query: Q
   params?: QueryParams
+  tag?: string
 }) {
   'use cache'
   const {data} = await sanityFetch({
@@ -46,7 +55,7 @@ export async function sanityFetchStaticParams<const Q extends string>({
     params,
     perspective: 'published',
     stega: false,
-    tags: [POST_CACHE_TAG],
+    tags: [tag],
   })
   return data
 }
@@ -55,12 +64,14 @@ export async function sanityFetchMetadata<const Q extends string>({
   query,
   params = {},
   perspective,
+  tag = POST_CACHE_TAG,
 }: {
   query: Q
   params?: QueryParams
   perspective: LivePerspective
+  tag?: string
 }) {
   'use cache'
-  const {data} = await sanityFetch({query, params, perspective, stega: false, tags: [POST_CACHE_TAG]})
+  const {data} = await sanityFetch({query, params, perspective, stega: false, tags: [tag]})
   return data
 }

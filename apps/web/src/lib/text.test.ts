@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {describePost, formatDate} from './text'
+import {describePost, formatDate, paragraphs} from './text'
 
 describe('describePost', () => {
   it('prefers the Writer’s excerpt', () => {
@@ -24,5 +24,19 @@ describe('describePost', () => {
 describe('formatDate', () => {
   it('formats in UTC so the date never shifts with the reader’s timezone', () => {
     expect(formatDate('2026-11-07T23:30:00Z')).toBe('November 7, 2026')
+  })
+})
+
+describe('paragraphs', () => {
+  it('splits at blank lines and folds single line breaks into spaces', () => {
+    expect(paragraphs('First line\ncontinues.\n\n  Second.  \n\n\n')).toEqual([
+      'First line continues.',
+      'Second.',
+    ])
+  })
+
+  it('is empty when there is no text', () => {
+    expect(paragraphs(undefined)).toEqual([])
+    expect(paragraphs('   ')).toEqual([])
   })
 })

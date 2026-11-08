@@ -14,3 +14,11 @@ const dateFormat = new Intl.DateTimeFormat('en', {dateStyle: 'long', timeZone: '
 export function formatDate(date: string | null | undefined) {
   return date ? dateFormat.format(new Date(date)) : undefined
 }
+
+/** Splits plain text the Writer typed (a Case Study's summary) into paragraphs at blank lines. */
+export function paragraphs(text: string | null | undefined): string[] {
+  return (text ?? '')
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+}

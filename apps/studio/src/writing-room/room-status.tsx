@@ -21,7 +21,8 @@ import {
 import styled from 'styled-components'
 import {API_VERSION} from '../lib/api-version'
 import {detailsForPublish, type PublishablePost} from '../lib/publish-details'
-import {slugTakenByAnotherPost} from '../lib/slug-availability'
+import {writingKind} from '@calm/content'
+import {slugTakenByAnother} from '../lib/slug-availability'
 import {goToProblem} from './go-to-problem'
 import {useOpenDetails} from './navigation'
 import {type PostStatus} from './post-status'
@@ -154,8 +155,9 @@ export function PublishButton({
   const apply = useApplyDocumentActions()
   const {data: post} = useDocument<PostForPublish>(handle)
   const isSynced = useDocumentSyncStatus(handle) ?? true
-  const validation = useValidationStatus(`drafts.${handle.documentId}`, 'post')
-  const openDetails = useOpenDetails(handle.documentId)
+  const validation = useValidationStatus(`drafts.${handle.documentId}`, handle.documentType)
+  const openDetails = useOpenDetails(handle)
+  const kind = writingKind(handle.documentType)
   const [phase, setPhase] = useState<'idle' | 'checking' | 'publishing'>('idle')
   const [timedOut, setTimedOut] = useState(false)
   const isFirstPublish = status.label === 'Draft'
@@ -192,7 +194,7 @@ export function PublishButton({
         const details = await detailsForPublish({
           post: post ?? {},
           isFirstPublish,
-          isTaken: slugTakenByAnotherPost(client, handle.documentId),
+          isTaken: slugTakenByAnother(client, handle.documentType, handle.documentId),
         })
         const edit = Object.keys(details).length > 0 ? [editDocument(handle, {set: {...details}})] : []
         await apply([...edit, publishDocument(handle)])
@@ -200,10 +202,16 @@ export function PublishButton({
         onNotice(
           post?.coverImage?.asset
             ? {text: 'Published'}
-            : {text: 'Published', action: {label: 'Add a cover image', onClick: openDetails}},
+            : {
+                text: 'Published',
+                action: {
+                  label: kind.type === 'caseStudy' ? 'Add a hero image' : 'Add a cover image',
+                  onClick: openDetails,
+                },
+              },
         )
       } catch {
-        onProblem('This Post couldn’t be published just now. Try again in a moment.')
+        onProblem(`This ${kind.singular} couldn’t be published just now. Try again in a moment.`)
       } finally {
         setPhase('idle')
       }
@@ -215,6 +223,7 @@ export function PublishButton({
     validation,
     post,
     isFirstPublish,
+    kind,
     client,
     handle,
     apply,

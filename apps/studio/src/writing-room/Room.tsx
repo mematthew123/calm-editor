@@ -12,6 +12,7 @@ import {Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react
 import {useColorSchemeValue} from 'sanity'
 import {useRouter} from 'sanity/router'
 import styled from 'styled-components'
+import {type WritingType, writingKind} from '@calm/content'
 import {BodyEditor} from './editor/BodyEditor'
 import {useBodySchema} from './editor/schema'
 import {isEmptyPost} from './empty-post'
@@ -33,9 +34,9 @@ import {TitleField} from './TitleField'
 import {useEscape} from './use-escape'
 import {useRecede} from './use-recede'
 
-/** The Writing Room for one Post. */
-export function Room({postId}: {postId: string}) {
-  const handle = useMemo<DocumentHandle>(() => ({documentId: postId, documentType: 'post'}), [postId])
+/** The Writing Room for one Post or Case Study. */
+export function Room({documentId, documentType}: {documentId: string; documentType: WritingType}) {
+  const handle = useMemo<DocumentHandle>(() => ({documentId, documentType}), [documentId, documentType])
   const [problem, setProblem] = useState<string | null>(null)
 
   return (
@@ -131,8 +132,12 @@ function LoadedRoom({
               )}
               <RoomSettingsMenu scheme={scheme} />
               <ThemeToggle />
-              <DetailsButton postId={handle.documentId} />
-              <PreviewButton slug={data?.slug} onProblem={onProblem} />
+              <DetailsButton handle={handle} />
+              <PreviewButton
+                documentType={writingKind(handle.documentType).type}
+                slug={data?.slug}
+                onProblem={onProblem}
+              />
               <PublishButton
                 handle={handle}
                 status={status}
@@ -164,7 +169,7 @@ function Title({handle, isPublished}: {handle: DocumentHandle; isPublished: bool
 }
 
 /**
- * Leave (or Esc) returns to the Lobby. A Post that was never published and is still completely
+ * Leave (or Esc) returns to the Lobby. A piece that was never published and is still completely
  * empty (Prose and Details alike) is discarded on the way out, so an abandoned "Start a new Post"
  * leaves nothing behind.
  */
@@ -186,8 +191,8 @@ function LeaveButton({handle, isPublished}: {handle: DocumentHandle; isPublished
   )
 }
 
-function DetailsButton({postId}: {postId: string}) {
-  const openDetails = useOpenDetails(postId)
+function DetailsButton({handle}: {handle: DocumentHandle}) {
+  const openDetails = useOpenDetails(handle)
   return <QuietButton onClick={openDetails}>Details</QuietButton>
 }
 

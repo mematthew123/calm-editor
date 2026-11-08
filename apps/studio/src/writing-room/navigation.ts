@@ -1,6 +1,8 @@
+import {type DocumentHandle} from '@sanity/sdk-react'
 import {useCallback} from 'react'
 import {useWorkspace} from 'sanity'
 import {useRouter} from 'sanity/router'
+import {type WritingType} from '@calm/content'
 
 function useStudioPath() {
   const {basePath} = useWorkspace()
@@ -14,13 +16,16 @@ export function useLeaveToStudio() {
   return useCallback(() => navigateUrl({path: studioPath('structure')}), [navigateUrl, studioPath])
 }
 
-/** The full list of Posts, in Structure. */
-export function useAllPostsPath() {
-  return useStudioPath()('structure/post')
+/** The full list of one kind of writing (all Posts, all Case Studies), in Structure. */
+export function useAllOfKindPath(documentType: WritingType) {
+  return useStudioPath()(`structure/${documentType}`)
 }
 
-/** Opens a Post's Details (the standard form) in Structure. */
-export function useOpenDetails(postId: string) {
+/** Opens a document's Details (the standard form) in Structure. */
+export function useOpenDetails({documentId, documentType}: DocumentHandle) {
   const {navigateIntent} = useRouter()
-  return useCallback(() => navigateIntent('edit', {id: postId, type: 'post'}), [navigateIntent, postId])
+  return useCallback(
+    () => navigateIntent('edit', {id: documentId, type: documentType}),
+    [navigateIntent, documentId, documentType],
+  )
 }
