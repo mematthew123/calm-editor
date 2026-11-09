@@ -1,5 +1,7 @@
 # Architecture Review: Calm Editor
 
+> **Paths have moved.** This record predates the Writing Room becoming a plugin. `apps/studio/src/writing-room/` is now `packages/writing-room/src/room/`; `apps/studio/src/actions/` and `apps/studio/src/lib/{slug,publish-details,slug-availability,image-url}.ts` are in `packages/writing-room/src/`; and `apps/studio/schemaTypes/` is `packages/writing-room/src/schema/`. See [`plugin-roadmap.md`](plugin-roadmap.md).
+
 **Status:** Proposed (for review)
 **Date:** 2026-11-07
 **Scope:** Every architectural decision currently in the repo (`apps/studio`, `apps/web`, `packages/*`), checked against the Sanity best-practice guides (`.agents/skills/sanity-best-practices/references/`: `schema`, `groq`, `nextjs`, `typegen`, `project-structure`, `app-sdk`, `image`, `visual-editing`) and the existing local ADRs 0001–0003.
@@ -235,7 +237,7 @@ validation: (rule) => rule.custom(async (slug, ctx) => /* same check as slugTake
 **Guard rails**
 4. [ ] **F4** — Add a CI check for a single `@sanity/sdk-react` copy, and group `sanity`/SDK/PTE bumps in Renovate.
 5. [ ] **F6** — `git rm --cached apps/studio/schema.json`, and turn on `typegen.enabled` or add a CI diff check.
-6. [ ] Move `API_VERSION` into `@calm/content` and import it in both apps.
+6. [ ] Move `API_VERSION` into `@calm/content` and import it everywhere. Since the plugin extraction there are three copies: the plugin, the Studio's seed script and the Reading Site.
 
 **When the need comes up**
 7. [ ] **F5** — Make the slug-availability query aware of releases before adopting Content Releases.
