@@ -10,7 +10,9 @@
 - [x] Config instead of env: `SANITY_STUDIO_READING_SITE_URL` is read by the template Studio and passed in as `preview.origin`. Without `preview`, the Preview button is hidden. The path (`/posts/<slug>`) and the draft-mode route are options too.
 - [x] Design tokens are rendered as a `<style>` from `toCss()` instead of importing `tokens.css`, so consumers don't need a CSS loader for the plugin.
 - [x] Build with tsdown to ESM + `.d.ts`. Dependencies and peers stay external; `@calm/content` and `@calm/tokens` are bundled. `publishConfig` points `exports` at `dist`, so the workspace uses `src` with no build step. `pnpm pack` produces a clean tarball.
-- [x] Peers: `sanity`, `react`, `react-dom`, `styled-components`, `@sanity/sdk-react`, `@portabletext/editor` (the last two must be single copies shared with Sanity).
+- [x] Peers: `sanity`, `react`, `react-dom`, `styled-components`, `@sanity/sdk-react`, `@portabletext/editor` (the last two must be single copies shared with Sanity). `react` is `^19.3.1`, because `@portabletext/editor` 8.2.12 requires it.
+- [x] Smoke test (`pnpm --filter sanity-plugin-writing-room smoke [version] [--loose]`): packs the plugin, installs it with npm into a fresh Studio, checks for a single copy of each shared package, type-checks the README's config and runs `sanity build`.
+- [x] Install guide, requirements and Preview setup for Next.js and other frameworks in the package README.
 
 ## Stage 2: fit other content models
 
@@ -29,13 +31,17 @@
 
 ## Stage 4: hardening
 
-- [ ] Smoke test against a fresh `sanity init` Studio from the packed tarball, not just the workspace.
+- [ ] Run the smoke test in CI against the declared minimum and `latest` of `sanity`.
+- [ ] **Widen the `sanity` range?** Sanity 6.12.0 through 6.21.x pass the smoke test with `--loose` (6.12 is the first release on App SDK v3 and `@portabletext/editor` 8). 6.11 and older fail with a second SDK and editor copy. The smoke test can't open the room, so try writing, publishing and previewing in a Studio on 6.12 before lowering the peer from `^6.22.0`.
+- [ ] A logged-in browser test of the room itself (needs a test project and a token in CI).
+- [ ] Check an embedded Studio (`next-sanity`'s `NextStudio` in a Next.js app) as well as a standalone one.
 - [ ] CI guard for a single `@sanity/sdk-react` (architecture review F4), and a test that fails if `sanity` and `@sanity/sdk-react` drift.
 - [ ] Decide which `@portabletext/*` plugins should be peers rather than dependencies, once we see what duplicates in real installs.
 - [ ] Revisit the auto-updates caveat whenever Sanity ships an SDK that shares context with an auto-updated Studio.
 
 ## Stage 5: release
 
+- [ ] Publish `0.0.1` to hold the name.
 - [ ] Version with Changesets; 0.x until Stage 2's API settles.
 - [ ] GitHub Action: lint, typecheck, test, build, `pnpm pack`, then publish with npm provenance on release.
 - [ ] README screenshot/GIF, and a Sanity Exchange listing.
@@ -45,7 +51,7 @@
 - [ ] Replace new-zeph's `apps/studio/src/writing-room` copy with the npm package and its options (`/blog` path, Case Studies, storage key).
 - [ ] Drop the "a schema change must land in both repos" rule from new-zeph's CLAUDE.md once both Studios use the same package version.
 
-## Open questions
+## Decisions
 
-- **Name.** `sanity-plugin-writing-room` is free on npm and follows Sanity's naming convention. A scope (e.g. `@zephyrpixels/sanity-plugin-writing-room`) is the alternative.
-- **Schema ownership.** Should the plugin register its schema types itself (zero setup, but clashes are likelier), or keep asking users to add `writingRoomSchemaTypes` (today)?
+- **Name: `sanity-plugin-writing-room`, unscoped.** It follows Sanity's `sanity-plugin-*` convention, so people find it on npm and the Sanity Exchange. Credit goes in `author`, the README and the Exchange listing rather than a scope. Publish a `0.0.1` early to hold the name.
+- **Schema: users register it themselves.** The plugin exports `writingRoomSchemaTypes` and doesn't add types on its own. `post` and `body` are common names, and Sanity refuses to start on a clash, with an error that doesn't point at the plugin. Explicit registration also suits Stage 2, where people point the room at their own document types. If the plugin ever needs internal types, it can register those itself under prefixed names.
