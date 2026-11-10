@@ -5,8 +5,8 @@
   "main": "package.json",
   "license": "MIT",
   "scripts": {
-    "build": "sanity build",
-    "deploy": "sanity deploy",
+    "build": "sanity build && node scripts/check-single-sdk.mjs",
+    "deploy": "pnpm run build && sanity deploy --no-build",
     "deploy-graphql": "sanity graphql deploy",
     "dev": "sanity dev",
     "start": "sanity start",

@@ -41,12 +41,12 @@
 
 ## Stage 4: hardening
 
-- [ ] Run the smoke test in CI against the declared minimum and `latest` of `sanity`.
+- [x] Run the smoke test in CI against the declared minimum and `latest` of `sanity` (`.github/workflows/ci.yml`, which also runs typecheck, test, lint and build on every pull request).
 - [ ] **Widen the `sanity` range?** Sanity 6.12.0 through 6.21.x pass the smoke test with `--loose` (6.12 is the first release on App SDK v3 and `@portabletext/editor` 8). 6.11 and older fail with a second SDK and editor copy. The smoke test can't open the room, so try writing, publishing and previewing in a Studio on 6.12 before lowering the peer from `^6.22.0`.
 - [ ] A logged-in browser test of the room itself (needs a test project and a token in CI).
-- [ ] Check an embedded Studio (`next-sanity`'s `NextStudio` in a Next.js app) as well as a standalone one.
-- [ ] CI guard for a single `@sanity/sdk-react` (architecture review F4), in the smoke test's Studio *and* the template Studio's `sanity build` (count the "SanityInstance context not found" message in `dist`: it should appear once), and a test that fails if `sanity` and `@sanity/sdk-react` drift.
-- [ ] Decide which `@portabletext/*` plugins should be peers rather than dependencies, once we see what duplicates in real installs.
+- [x] Check an embedded Studio: `smoke --embedded` builds the Studio inside a Next.js 16 App Router app with `next-sanity`'s `NextStudio` and checks the browser bundle has one App SDK. Needs `'use client'` in `sanity.config.ts`, as Sanity's guide says. A build check; nobody has written in an embedded room yet.
+- [x] Single `@sanity/sdk-react` guard (architecture review F4): the smoke test (Studio and Next.js bundles) and the template's `pnpm build`, which `pnpm deploy` now goes through (`sanity deploy --no-build`), fail on a second copy. They count the tail of the SDK's error ("wrapped in a ResourceProvider or a SanityApp component"): the room's own setup-problem screen contains the start of it. Drift between `sanity` and `@sanity/sdk-react` shows up as exactly that second copy.
+- [x] `@portabletext/*`: only `@portabletext/sanity-bridge` duplicated in a real install (Sanity 6.22 uses 4.1.5, the plugin asked for 5). The function the room uses is the same in both, so the range is now `^4.1.5 || ^5.0.0` and npm shares Sanity's copy. The `plugin-*` packages stay dependencies: Sanity doesn't ship them. The smoke test now fails on any duplicated `@portabletext/*` package (outside `--loose`).
 - [ ] Revisit the auto-updates caveat whenever Sanity ships an SDK that shares context with an auto-updated Studio.
 
 ## Stage 5: release
