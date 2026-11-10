@@ -5,3 +5,8 @@ packages:
 allowBuilds:
   sharp: false
   unrs-resolver: false
+
+# Our own plugin, published from mematthew123/sanity-plugin-writing-room with npm trusted
+# publishing: install new versions right away instead of waiting out pnpm's minimum release age.
+minimumReleaseAgeExclude:
+  - sanity-plugin-writing-room
