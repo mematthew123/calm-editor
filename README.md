@@ -117,16 +117,15 @@ npm install sanity-plugin-writing-room
 
 ```ts
 // sanity.config.ts
-import {writingRoom, writingRoomSchemaTypes} from 'sanity-plugin-writing-room'
+import {writingRoom} from 'sanity-plugin-writing-room'
 
 export default defineConfig({
   // …
-  plugins: [structureTool(), writingRoom()],
-  schema: {types: writingRoomSchemaTypes},
+  plugins: [structureTool(), writingRoom({types: ['post']})],
 })
 ```
 
-Then turn off Studio auto-updates (see [Deploying](#deploying)). The [plugin's README](packages/writing-room/README.md) has the full requirements, Preview setup for any framework, and the compatibility table. The package isn't on npm yet; [`docs/plugin-roadmap.md`](docs/plugin-roadmap.md) tracks what's left before it is.
+List your own document types: the room finds their title, body, slug and published date, and only offers what each body can store. Then turn off Studio auto-updates (see [Deploying](#deploying)). The [plugin's README](packages/writing-room/README.md) has the rest: the starter schema for Studios without a Post type, colours and the optional theme, Preview for any framework, and compatibility. Releases are in its [changelog](packages/writing-room/CHANGELOG.md); [`docs/releasing.md`](docs/releasing.md) explains how they're made.
 
 ## Scripts
 
