@@ -2,7 +2,7 @@
 
 **Goal.** Publish the Writing Room as `sanity-plugin-writing-room`, a Sanity Studio plugin anyone can add to an existing Studio. The template (`apps/studio`) and zephyrpixels.dev (`mematthew123/new-zeph`) then consume it instead of keeping copies in sync by hand.
 
-## Stage 1: extract the package (done on this branch)
+## Stage 1: extract the package (done)
 
 - [x] Move the room (`src/writing-room` → `packages/writing-room/src/room`), the publish wrapper, its helpers (`slug`, `publish-details`, `slug-availability`, `image-url`) and the schema (`schemaTypes` → `src/schema`) into `packages/writing-room`. Tests moved with them.
 - [x] Public API: `writingRoom(options)`, `writingRoomSchemaTypes`, and each schema type on its own.
@@ -13,6 +13,7 @@
 - [x] Peers: `sanity`, `react`, `react-dom`, `styled-components`, `@sanity/sdk-react`, `@portabletext/editor` (the last two must be single copies shared with Sanity). `react` is `^19.3.1`, because `@portabletext/editor` 8.2.12 requires it.
 - [x] Smoke test (`pnpm --filter sanity-plugin-writing-room smoke [version] [--loose]`): packs the plugin, installs it with npm into a fresh Studio, checks for a single copy of each shared package, type-checks the README's config and runs `sanity build`.
 - [x] Install guide, requirements and Preview setup for Next.js and other frameworks in the package README.
+- [x] The template Studio dedupes the packages it shares with the plugin (`resolve.dedupe` in `apps/studio/sanity.cli.ts`). Used from `src`, the plugin resolves from its own `node_modules`, and pnpm gave it a second `@sanity/sdk-react` and `sanity`, so the room crashed with "SanityInstance context not found". The smoke test missed it: an npm install of the tarball gets one copy.
 
 ## Stage 2: fit other content models
 
@@ -35,7 +36,7 @@
 - [ ] **Widen the `sanity` range?** Sanity 6.12.0 through 6.21.x pass the smoke test with `--loose` (6.12 is the first release on App SDK v3 and `@portabletext/editor` 8). 6.11 and older fail with a second SDK and editor copy. The smoke test can't open the room, so try writing, publishing and previewing in a Studio on 6.12 before lowering the peer from `^6.22.0`.
 - [ ] A logged-in browser test of the room itself (needs a test project and a token in CI).
 - [ ] Check an embedded Studio (`next-sanity`'s `NextStudio` in a Next.js app) as well as a standalone one.
-- [ ] CI guard for a single `@sanity/sdk-react` (architecture review F4), and a test that fails if `sanity` and `@sanity/sdk-react` drift.
+- [ ] CI guard for a single `@sanity/sdk-react` (architecture review F4), in the smoke test's Studio *and* the template Studio's `sanity build` (count the "SanityInstance context not found" message in `dist`: it should appear once), and a test that fails if `sanity` and `@sanity/sdk-react` drift.
 - [ ] Decide which `@portabletext/*` plugins should be peers rather than dependencies, once we see what duplicates in real installs.
 - [ ] Revisit the auto-updates caveat whenever Sanity ships an SDK that shares context with an auto-updated Studio.
 
