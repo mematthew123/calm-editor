@@ -15,17 +15,26 @@
 - [x] Install guide, requirements and Preview setup for Next.js and other frameworks in the package README.
 - [x] The template Studio dedupes the packages it shares with the plugin (`resolve.dedupe` in `apps/studio/sanity.cli.ts`). Used from `src`, the plugin resolves from its own `node_modules`, and pnpm gave it a second `@sanity/sdk-react` and `sanity`, so the room crashed with "SanityInstance context not found". The smoke test missed it: an npm install of the tarball gets one copy.
 
-## Stage 2: fit other content models
+## Stage 2: zero config in any Studio
 
-- [x] **Configurable document types.** `writingRoom({types: ['post', 'caseStudy']})`, ported from new-zeph's `WRITING_KINDS` and `room-route.ts`. Names come from each schema type's `title` (overridable with `title`/`pluralTitle`); the first type keeps `/writing-room/<id>`, others open at `/writing-room/<type>/<id>`; `preview.pathname` gets `(slug, type)`; slugs are unique per type; the "Add a cover image" nudge only shows for types with a `coverImage` field. Still assumes `title`, `body`, `slug` and `publishedAt` (next item).
-- [ ] **Bring your own schema.** Document the contract (`title`, `body`, `slug`, `publishedAt`) and offer a helper that adds the room's fields to a user's document type, instead of only shipping our `post`.
-- [ ] **Name clashes.** `body` is a common type name. Make the body type name an option (the stored `_type`s of blocks, `embed`/`codeBlock`/`sectionBreak`, must stay as they are, or existing content needs a migration).
-- [ ] Unknown block types in a user's `body`: render a neutral placeholder rather than failing.
-- [ ] Per-Studio storage key for Room Settings and preview-secret source (new-zeph overrides both today).
+**Goal.** The whole setup is `writingRoom({types: ['post', 'caseStudy']})`. The room reads everything else from the Studio's own schema: no schema to import, no fields to rename, no Structure to change. Options stay optional overrides for the unusual case. The one step left is `autoUpdates: false`, and only until Sanity lifts that limit (Stage 4).
+
+**Acceptance test: Chipter's `post`** with nothing but `writingRoom({types: ['post']})`. Its body is `blockContent` (no embeds, code blocks or section breaks), it lives at `structure/blog;post`, and its image is `mainImage`. (`chipter` has a `writing-room-sandbox` branch with the plugin installed from a tarball.)
+
+- [x] **Configurable document types.** `writingRoom({types: ['post', 'caseStudy']})`, ported from new-zeph's `WRITING_KINDS` and `room-route.ts`. Names come from each schema type's `title` (overridable with `title`/`pluralTitle`); the first type keeps `/writing-room/<id>`, others open at `/writing-room/<type>/<id>`; `preview.pathname` gets `(slug, type)`; slugs are unique per type.
+- [x] **Find each type's fields.** Detect the title (`title`, or the field the type's preview uses), the body (the portable text field: `body` first, else the only one, else the first), the slug (a `slug` field) and the published date (`publishedAt`, else a datetime field whose name says published). A per-type `fields` override covers the rest. The room reads and writes through that map everywhere: title field, editor, word count, publish details, the empty check, publish problems, the Lobby. A type with no slug or no date still works; the room just doesn't settle what isn't there.
+- [x] **The editor follows the document's own body type.** Build the editor's schema from the detected body field's type, not a global `body`. The insert menu, markdown shortcuts and selection bubble offer only what that type allows (styles, lists, decorators, links, block objects). Chipter gets headings, quotes, bullets, links and images; nothing it can't store. Image description and caption inputs only show when the image type has `alt`/`caption`. The empty-draft check ignores booleans and numbers, so a schema's initial values (`commentsEnabled: true`) don't stop an abandoned draft being discarded.
+- [ ] **The plugin registers its own block types, prefixed.** `writingRoom.embed`, `writingRoom.codeBlock`, `writingRoom.sectionBreak`, added by the plugin so they can't clash. A Studio opts in by adding them to its own body type's `of`. `writingRoomSchemaTypes` stays as an optional starter for Studios without a Post type, and keeps the unprefixed `embed`/`codeBlock`/`sectionBreak` so the template's and new-zeph's existing content stays valid; the room renders both names.
+- [ ] **Unknown blocks.** A block type the room doesn't know (a user's `callout`, `chipterScale`…) renders as a neutral placeholder the Writer can move or delete, with its fields one click away in Details.
+- [ ] **"All …" works with any Structure.** Find where the type is listed in the Studio's Structure, or hide the link when it can't be found. Today it assumes `structure/<type>`.
+- [x] **Cover image without naming it.** Detect the type's main image field (`coverImage`, `mainImage`, or the first image field outside the body) for the "Add a cover image" nudge, and use that field's title in the label.
+- [ ] **No per-Studio keys to set.** Derive the Room Settings storage key and the preview-secret source from the project and workspace, so two Studios never collide and nothing needs configuring (new-zeph overrides both by hand today).
+- [ ] **Explain the auto-updates crash.** Catch "SanityInstance context not found" in the Tool and show what to change (`autoUpdates: false`) instead of the raw error.
+- [x] **Say what Publish does.** Publishing from the room is a real publish, so webhooks and Functions fire (Chipter's `bluesky-post` cross-posts any `post` with `blueskyPost`). README note; no option unless someone needs one.
 
 ## Stage 3: look and feel in someone else's Studio
 
-- [ ] Fonts: decide between documenting them (now) and shipping them (font files in the package, or an opt-in `fonts: true`).
+- [ ] Fonts: ship them with the plugin (zero config), loaded only inside the room, with the current Georgia/system fallback while they load.
 - [ ] Export the Studio theme (`apps/studio/src/theme.ts`) as an optional `writingRoomTheme`, with `@sanity/themer` as an optional peer.
 - [ ] Let consumers override tokens (accent, paper) without forking.
 - [ ] Check the `--calm-*` custom properties can't leak into or clash with the rest of a Studio (they're set on `:root` today).
@@ -44,15 +53,17 @@
 
 - [ ] Publish `0.0.1` to hold the name.
 - [ ] Version with Changesets; 0.x until Stage 2's API settles.
+- [ ] Install docs shrink to: `npm install`, add `writingRoom({types: [...]})`, turn off auto-updates.
 - [ ] GitHub Action: lint, typecheck, test, build, `pnpm pack`, then publish with npm provenance on release.
 - [ ] README screenshot/GIF, and a Sanity Exchange listing.
 
 ## Stage 6: adopt it in new-zeph
 
-- [ ] Replace new-zeph's `apps/studio/src/writing-room` copy with the npm package and its options (`/blog` path, Case Studies, storage key).
+- [ ] Replace new-zeph's `apps/studio/src/writing-room` copy with the npm package: `writingRoom({types: ['post', 'caseStudy'], preview: {…}})`, keeping its own schema.
 - [ ] Drop the "a schema change must land in both repos" rule from new-zeph's CLAUDE.md once both Studios use the same package version.
 
 ## Decisions
 
 - **Name: `sanity-plugin-writing-room`, unscoped.** It follows Sanity's `sanity-plugin-*` convention, so people find it on npm and the Sanity Exchange. Credit goes in `author`, the README and the Exchange listing rather than a scope. Publish a `0.0.1` early to hold the name.
-- **Schema: users register it themselves.** The plugin exports `writingRoomSchemaTypes` and doesn't add types on its own. `post` and `body` are common names, and Sanity refuses to start on a clash, with an error that doesn't point at the plugin. Explicit registration also suits Stage 2, where people point the room at their own document types. If the plugin ever needs internal types, it can register those itself under prefixed names.
+- **Zero config is the goal.** Setup is the `types` list. Anything the room can read from the schema, it reads; options exist only to override what it detects. Decided 2026-11-09, after the Chipter sandbox needed a vendored tarball, imported block types, a sandbox type and a Structure change.
+- **Schema: the plugin never registers your names.** It doesn't add `post` or `body`; it works with the document types you already have. It does register its own block types, under the `writingRoom.` prefix, so they can't clash. `writingRoomSchemaTypes` is an optional starter you register yourself. (Replaces "users register the schema themselves", which asked every Studio to add our `body`.)
