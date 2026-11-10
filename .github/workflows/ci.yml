@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Typecheck, test, lint, build
+    runs-on: ubuntu-latest
+    env:
+      # The Studio build never calls Sanity, so placeholders do; its build also fails if the bundle
+      # has two copies of @sanity/sdk-react (apps/studio/scripts/check-single-sdk.mjs).
+      SANITY_STUDIO_PROJECT_ID: abc12345
+      SANITY_STUDIO_DATASET: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run typecheck test lint
+      - run: pnpm turbo run build --filter=!web
+      # The Reading Site renders every Post from Sanity at build time, so it needs a real project.
+      # Set NEXT_PUBLIC_SANITY_PROJECT_ID (and NEXT_PUBLIC_SANITY_DATASET) as repository variables.
+      - name: Build the Reading Site
+        if: vars.NEXT_PUBLIC_SANITY_PROJECT_ID != ''
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
+        run: pnpm turbo run build --filter=web
+
+  smoke:
+    name: Plugin in a fresh Studio (sanity@${{ matrix.sanity }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The declared minimum (peerDependencies.sanity) and the newest release, which also
+          # gets the Studio embedded in a Next.js app.
+          - sanity: 6.22.0
+          - sanity: latest
+            flags: --embedded
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter sanity-plugin-writing-room smoke ${{ matrix.sanity }} ${{ matrix.flags }}
