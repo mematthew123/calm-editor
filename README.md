@@ -103,7 +103,7 @@ In your project's API settings, add `http://localhost:3000` as a CORS origin wit
 
 ## Making it yours
 
-- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which the Reading Site imports; the Writing Room renders the same tokens itself), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
+- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which the Reading Site imports; the Writing Room renders the same tokens itself, scoped to the room), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
 - **Content model.** The schema ships with the plugin, in `packages/writing-room/src/schema`, and the Studio registers it in `apps/studio/sanity.config.ts`. The Writing Room's editor reads the `body` type directly, so blocks you add there appear in the room. Give each new block a renderer in `packages/writing-room/src/room/editor/nodes.tsx` and the Reading Site's `Prose` component.
 - **One rule to keep.** Only Prose (title, body, and alt text on body images) may *block* a publish, because the Writer can't fix anything else from inside the room. Every Detail is optional, or at most a warning, and the Reading Site supplies a fallback when one is empty.
 

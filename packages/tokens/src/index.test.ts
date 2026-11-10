@@ -1,6 +1,6 @@
 import {readFileSync} from 'node:fs'
 import {describe, expect, it} from 'vitest'
-import {palette, toCss, type Scheme} from './index.ts'
+import {palette, toCss, toScopedCss, type Scheme} from './index.ts'
 
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5]
@@ -40,4 +40,26 @@ describe.each<Scheme>(['light', 'dark'])('%s palette', (scheme) => {
 it('tokens.css is up to date with the source tokens', () => {
   const committed = readFileSync(new URL('../tokens.css', import.meta.url), 'utf8')
   expect(committed, 'Run `pnpm --filter @calm/tokens build`').toBe(toCss())
+})
+
+describe('toScopedCss', () => {
+  const css = toScopedCss(['[data-calm-surface]', '[data-calm-floating]'])
+  const selectors = css
+    .split('\n')
+    .filter((line) => line.trim().endsWith('{') || line.trim().endsWith(','))
+    .map((line) => line.trim().replace(/[{,]$/, '').trim())
+    .filter((selector) => !selector.startsWith('@media'))
+
+  it('only ever targets the given elements', () => {
+    expect(selectors.length).toBeGreaterThan(0)
+    for (const selector of selectors) {
+      expect(selector).toMatch(/^\[data-calm-(surface|floating)\]/)
+    }
+    expect(css).not.toContain(':root')
+  })
+
+  it('carries every token toCss sets', () => {
+    const names = (text: string) => new Set(text.match(/--calm-[\w-]+(?=:)/g))
+    expect(names(css)).toEqual(names(toCss()))
+  })
 })
