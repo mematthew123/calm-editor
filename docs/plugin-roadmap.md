@@ -34,10 +34,10 @@
 
 ## Stage 3: look and feel in someone else's Studio
 
-- [ ] Fonts: ship them with the plugin (zero config), loaded only inside the room, with the current Georgia/system fallback while they load.
-- [ ] Export the Studio theme (`apps/studio/src/theme.ts`) as an optional `writingRoomTheme`, with `@sanity/themer` as an optional peer.
-- [ ] Let consumers override tokens (accent, paper) without forking.
-- [ ] Check the `--calm-*` custom properties can't leak into or clash with the rest of a Studio (they're set on `:root` today).
+- [x] Fonts: shipped with the plugin. Newsreader (upright and a true italic, which the template never loaded) and Figtree, Latin and Latin Extended, inlined as data URLs in their own chunk (~230 KB) that loads when the room first opens; no CSS loader, no CDN. The template no longer installs `@fontsource-variable/*`.
+- [x] `writingRoomTheme` and `createWritingRoomTheme({colors})` from `sanity-plugin-writing-room/theme`, with `@sanity/themer` as an optional peer. The entry point declares Figtree itself, so the Studio's text has it from the first screen. The template uses it; its own `theme.ts` is gone.
+- [x] `writingRoom({colors: {light: {accent: '#2F6FA8'}}})` overrides any of the room's colours per scheme (typed as `WritingRoomColors`, checked against the tokens' palette at compile time).
+- [x] Tokens no longer touch the rest of a Studio. They were on `:root` and `[data-scheme]`, which set `color-scheme` (scrollbars, native controls) for the whole Studio and matched Sanity UI elements that carry their own `data-scheme`. `toScopedCss()` sets them only on `[data-calm-surface]` and the room's portaled popovers (`[data-calm-floating]`).
 
 ## Stage 4: hardening
 
