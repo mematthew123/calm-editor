@@ -257,7 +257,7 @@ Plain, warm, brief. Write like a considerate person sitting beside the Writer.
 
 For any styling value, work down this list and stop at the first that applies:
 
-1. **A CSS custom property** — `var(--calm-color-ink)`, `var(--calm-font-prose)`, `var(--calm-radius-large)`, `var(--calm-motion-recede)`. Colour properties re-resolve per scheme, so the component works in light and dusk with no extra work. Import `@calm/tokens/tokens.css` once at the app's root.
+1. **A CSS custom property** — `var(--calm-color-ink)`, `var(--calm-font-prose)`, `var(--calm-radius-large)`, `var(--calm-motion-recede)`. Colour properties re-resolve per scheme, so the component works in light and dusk with no extra work. Import `@calm/tokens/tokens.css` once at the app's root (the Reading Site does this in `globals.css`). The Writing Room plugin doesn't import it: it renders the same CSS from `toCss()` as a `<style>`, so Studios that install it from npm need no CSS loader.
 2. **The TypeScript export** — `import {palette, fonts} from '@calm/tokens'` — only where CSS variables can't reach: the Studio theme (`buildTheme` needs literal colours), canvas, or an SVG data URI.
 3. **A literal** — never. Add a token instead, update this file, and let the tests confirm contrast.
 

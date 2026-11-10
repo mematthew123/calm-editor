@@ -6,6 +6,8 @@ A calm, full-screen place to write long-form Posts inside Sanity Studio, and a R
 
 Most Studios put writing in a form: panes, field labels and a toolbar around every sentence. This template adds a **Writing Room**: a Studio Tool with its own route that shows only a Post's title and body, and gets out of the way while you type. Everything else about a Post (slug, excerpt, cover image, tags) stays in the standard form, one click away.
 
+The Writing Room is also a Studio plugin, `sanity-plugin-writing-room` (in `packages/writing-room`), so you can add it to a Studio you already have. See [Use the Writing Room in your own Studio](#use-the-writing-room-in-your-own-studio).
+
 ## What's in the room
 
 - **The Lobby**: start a new Post or pick up a recent one.
@@ -24,10 +26,11 @@ The **Reading Site** is a Next.js 16 app that uses the Live Content API and Cach
 
 ```
 apps/
-  studio/      Sanity Studio v6, with the Writing Room in src/writing-room
+  studio/      Sanity Studio v6, configured with the Writing Room plugin
   web/         The Reading Site (Next.js 16, Tailwind CSS 4)
 packages/
-  content/     Rules about Posts shared by both apps (e.g. parsing embed URLs)
+  writing-room/ The Writing Room as a Studio plugin (sanity-plugin-writing-room)
+  content/     Rules about Posts shared by the plugin and the Reading Site (e.g. parsing embed URLs)
   tokens/      Design tokens (src/index.ts), mirrored in DESIGN.md
 ```
 
@@ -100,9 +103,30 @@ In your project's API settings, add `http://localhost:3000` as a CORS origin wit
 
 ## Making it yours
 
-- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which both apps use), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
-- **Content model.** `apps/studio/schemaTypes`. The Writing Room's editor reads the `body` type directly, so blocks you add there appear in the room. Give each new block a renderer in `src/writing-room/editor/nodes.tsx` and the Reading Site's `Prose` component.
+- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which the Reading Site imports; the Writing Room renders the same tokens itself), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
+- **Content model.** The schema ships with the plugin, in `packages/writing-room/src/schema`, and the Studio registers it in `apps/studio/sanity.config.ts`. The Writing Room's editor reads the `body` type directly, so blocks you add there appear in the room. Give each new block a renderer in `packages/writing-room/src/room/editor/nodes.tsx` and the Reading Site's `Prose` component.
 - **One rule to keep.** Only Prose (title, body, and alt text on body images) may *block* a publish, because the Writer can't fix anything else from inside the room. Every Detail is optional, or at most a warning, and the Reading Site supplies a fallback when one is empty.
+
+## Use the Writing Room in your own Studio
+
+You don't need this template, or Next.js, to use the room. In any Sanity Studio v6 (6.22 or newer):
+
+```sh
+npm install sanity-plugin-writing-room
+```
+
+```ts
+// sanity.config.ts
+import {writingRoom, writingRoomSchemaTypes} from 'sanity-plugin-writing-room'
+
+export default defineConfig({
+  // …
+  plugins: [structureTool(), writingRoom()],
+  schema: {types: writingRoomSchemaTypes},
+})
+```
+
+Then turn off Studio auto-updates (see [Deploying](#deploying)). The [plugin's README](packages/writing-room/README.md) has the full requirements, Preview setup for any framework, and the compatibility table. The package isn't on npm yet; [`docs/plugin-roadmap.md`](docs/plugin-roadmap.md) tracks what's left before it is.
 
 ## Scripts
 
@@ -112,6 +136,8 @@ In your project's API settings, add `http://localhost:3000` as a CORS origin wit
 | `pnpm build` / `pnpm typecheck` / `pnpm lint` / `pnpm test` | Across every package |
 | `pnpm seed` | Adds the sample Posts |
 | `pnpm --filter studio typegen` | Regenerates the Reading Site's query types from the schema |
+| `pnpm --filter sanity-plugin-writing-room build` | Builds the plugin for npm (`packages/writing-room/dist`) |
+| `pnpm --filter sanity-plugin-writing-room smoke` | Installs the packed plugin into a fresh Studio and builds it (add a `sanity` version to test an older one) |
 | `pnpm validate` | Checks the repo against Sanity's template requirements |
 
 ## License

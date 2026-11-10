@@ -10,3 +10,6 @@ function required(value: string | undefined, name: string): string {
     throw new Error(`Missing ${name}. Copy apps/studio/.env.example to .env.local and fill it in.`)
   return value
 }
+
+/** Where the Writing Room's Preview opens Posts. Defaults to the Reading Site's dev server. */
+export const readingSiteUrl = process.env.SANITY_STUDIO_READING_SITE_URL || 'http://localhost:3000'
