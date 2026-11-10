@@ -176,3 +176,43 @@ ${declarations('color-', {...palette.dark}, '    ')}
 }
 `
 }
+
+/**
+ * The same tokens, set only on the given elements (a plugin's own surface and popovers), never on
+ * `:root` or on other elements' `data-scheme`, so they can't change the rest of a Studio: its
+ * `color-scheme`, its scrollbars, or Sanity UI cards that carry their own `data-scheme`.
+ */
+export function toScopedCss(
+  selectors: string[],
+  colors: Record<Scheme, Palette> = palette,
+): string {
+  const on = (suffix = '') => selectors.map((selector) => `${selector}${suffix}`).join(',\n')
+  const constants = [
+    declarations('font-', fonts, '  '),
+    declarations('prose-size-', proseSize, '  '),
+    declarations('type-', type, '  '),
+    declarations('weight-', weight, '  '),
+    declarations('space-', space, '  '),
+    declarations('', layout, '  '),
+    declarations('motion-', motion, '  '),
+  ].join('\n')
+
+  return `${on()} {
+  color-scheme: light;
+${declarations('color-', {...colors.light}, '  ')}
+${constants}
+}
+
+${on("[data-scheme='dark']")} {
+  color-scheme: dark;
+${declarations('color-', {...colors.dark}, '  ')}
+}
+
+@media (prefers-color-scheme: dark) {
+  ${on(":not([data-scheme='light'])").replace(/\n/g, '\n  ')} {
+    color-scheme: dark;
+${declarations('color-', {...colors.dark}, '    ')}
+  }
+}
+`
+}
