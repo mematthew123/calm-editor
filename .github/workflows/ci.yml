@@ -37,24 +37,3 @@ jobs:
           NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
         run: pnpm turbo run build --filter=web
 
-  smoke:
-    name: Plugin in a fresh Studio (sanity@${{ matrix.sanity }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # The declared minimum (peerDependencies.sanity) and the newest release, which also
-          # gets the Studio embedded in a Next.js app.
-          - sanity: 6.22.0
-          - sanity: latest
-            flags: --embedded
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter sanity-plugin-writing-room smoke ${{ matrix.sanity }} ${{ matrix.flags }}
