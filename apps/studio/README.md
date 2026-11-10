@@ -3,7 +3,7 @@
 Sanity Studio v6, configured with the Writing Room plugin (`sanity-plugin-writing-room`, in `packages/writing-room`).
 
 - `sanity.config.ts` adds the plugin and registers its schema types: a `post` document and its `body` (Portable Text with images, embeds, code blocks and section breaks). The schema itself lives in `packages/writing-room/src/schema`.
-- `src/theme.ts` gives the rest of the Studio the Writing Room's paper, neutrals, accent and UI typeface.
+- `writingRoomTheme` (from `sanity-plugin-writing-room/theme`) gives the rest of the Studio the Writing Room's paper, neutrals, accent and UI typeface.
 - `src/lib/env.ts` reads the project, dataset and Reading Site URL from `.env.local`.
 - `seed/` holds the sample Posts added by `pnpm seed`.
 
