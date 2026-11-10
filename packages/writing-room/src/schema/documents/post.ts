@@ -1,6 +1,6 @@
 import {DocumentTextIcon} from '@sanity/icons/DocumentText'
 import {defineField, defineType, type SlugIsUniqueValidator} from 'sanity'
-import {API_VERSION} from '../../src/lib/api-version'
+import {API_VERSION} from '../../lib/api-version'
 
 /**
  * Until a Post's first publish its slug follows the title, and publishing settles any clash

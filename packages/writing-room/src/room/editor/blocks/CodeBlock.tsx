@@ -1,7 +1,7 @@
 import {type BlockObjectRenderProps} from '@portabletext/editor'
 import {useLayoutEffect, useRef} from 'react'
 import styled from 'styled-components'
-import {CODE_LANGUAGES} from '../../../../schemaTypes/objects/code-block'
+import {CODE_LANGUAGES} from '../../../schema/objects/code-block'
 import {useBlockField} from '../use-block-field'
 import {BlockFrame, Controls} from './frame'
 
