@@ -54,7 +54,7 @@
 - [ ] Publish `0.0.1` to hold the name. Ready: the version, changelog and metadata are set and `pnpm pack` is checked; it needs `npm login` and `pnpm publish --access public` from `packages/writing-room` (see `docs/releasing.md`).
 - [x] Version with Changesets (`.changeset/`, GitHub changelog links); only the plugin is versioned. 0.x until the API settles.
 - [x] Install docs shrink to: `npm install`, add `writingRoom({types: [...]})`, turn off auto-updates.
-- [x] GitHub Action (`.github/workflows/release.yml`): on `main`, checks the plugin, then Changesets opens a release PR; merging it publishes with npm provenance. Publishing waits for the `NPM_TOKEN` secret and `NPM_PUBLISH=true` variable.
+- [x] GitHub Action (`.github/workflows/release.yml`): on `main`, checks the plugin, then Changesets opens a release PR; merging it publishes with npm provenance. Publishes with npm trusted publishing (OIDC, no token; `changesets/action@v2`, which Changesets 3 needs) once the package trusts `release.yml` and `NPM_PUBLISH=true` is set. A token-based first attempt failed: npm asked for a 2FA one-time password, and bypass-2FA tokens are being phased out.
 - [ ] README screenshot/GIF, and a Sanity Exchange listing.
 
 ## Stage 6: adopt it in new-zeph

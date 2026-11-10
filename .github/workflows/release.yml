@@ -1,8 +1,12 @@
 name: Release
 
-# On main: Changesets opens (or updates) a "Version Packages" pull request from the pending
-# changesets. Merging that PR bumps the plugin's version and changelog, and this workflow then
-# publishes it to npm with provenance. See docs/releasing.md.
+# On main: Changesets opens (or updates) a "Release sanity-plugin-writing-room" pull request
+# from the pending changesets. Merging that PR bumps the plugin's version and changelog, and this
+# workflow then publishes it to npm. See docs/releasing.md.
+#
+# Publishing uses npm trusted publishing (OIDC): no npm token is stored anywhere. The plugin's
+# npm settings trust this repository and this file (release.yml); pnpm 11 (>= 11.1.3) exchanges
+# the job's GitHub identity for a short-lived publish token itself, and npm adds provenance.
 
 on:
   push:
@@ -12,8 +16,8 @@ concurrency: release-${{ github.ref }}
 
 permissions:
   contents: write # push the version commit and tags
-  pull-requests: write # open the Version Packages PR
-  id-token: write # npm provenance
+  pull-requests: write # open the release PR
+  id-token: write # trusted publishing (OIDC) and provenance
 
 jobs:
   release:
@@ -25,19 +29,14 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run typecheck test lint build --filter=sanity-plugin-writing-room...
-      - uses: changesets/action@v1
+      - uses: changesets/action@v2
         with:
-          version: pnpm exec changeset version
-          # Publishing stays off until the repository variable NPM_PUBLISH is "true" (and the
-          # NPM_TOKEN secret is set), so the Version Packages PR works before npm is set up.
-          publish: ${{ vars.NPM_PUBLISH == 'true' && 'pnpm release' || '' }}
-          title: Release sanity-plugin-writing-room
-          commit: Release sanity-plugin-writing-room
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+          version-script: pnpm exec changeset version
+          # Publishing stays off until the repository variable NPM_PUBLISH is "true", which you set
+          # once the package trusts this workflow on npm.
+          publish-script: ${{ vars.NPM_PUBLISH == 'true' && 'pnpm release' || '' }}
+          pr-title: Release sanity-plugin-writing-room
+          commit-message: Release sanity-plugin-writing-room
+          create-github-releases: true
