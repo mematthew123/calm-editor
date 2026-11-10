@@ -6,7 +6,7 @@ A calm, full-screen place to write long-form Posts inside Sanity Studio, and a R
 
 Most Studios put writing in a form: panes, field labels and a toolbar around every sentence. This template adds a **Writing Room**: a Studio Tool with its own route that shows only a Post's title and body, and gets out of the way while you type. Everything else about a Post (slug, excerpt, cover image, tags) stays in the standard form, one click away.
 
-The Writing Room is also a Studio plugin, `sanity-plugin-writing-room` (in `packages/writing-room`), so you can add it to a Studio you already have. See [Use the Writing Room in your own Studio](#use-the-writing-room-in-your-own-studio).
+The Writing Room is a Studio plugin, [`sanity-plugin-writing-room`](https://github.com/mematthew123/sanity-plugin-writing-room), which this template installs from npm like any other Studio. You can add it to a Studio you already have. See [Use the Writing Room in your own Studio](#use-the-writing-room-in-your-own-studio).
 
 ## What's in the room
 
@@ -103,8 +103,8 @@ In your project's API settings, add `http://localhost:3000` as a CORS origin wit
 
 ## Making it yours
 
-- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which the Reading Site imports; the Writing Room renders the same tokens itself, scoped to the room), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
-- **Content model.** The schema ships with the plugin, in `packages/writing-room/src/schema`, and the Studio registers it in `apps/studio/sanity.config.ts`. The Writing Room's editor reads the `body` type directly, so blocks you add there appear in the room. Give each new block a renderer in `packages/writing-room/src/room/editor/nodes.tsx` and the Reading Site's `Prose` component.
+- **Look and feel.** The colours and type scale live in `packages/tokens/src/index.ts`. Change them there, run `pnpm --filter @calm/tokens build` to regenerate `packages/tokens/tokens.css` (which the Reading Site imports; the plugin keeps its own copy in its `src/tokens.ts`; change both), then update the front matter in `DESIGN.md` to match. A test fails if the two drift apart.
+- **Content model.** The schema is the plugin's starter, `writingRoomSchemaTypes`, registered in `apps/studio/sanity.config.ts`. To change it, register your own `post` and `body` instead (the room finds their fields itself). Blocks the room doesn't know show as placeholders; give each new block a renderer in the Reading Site's `Prose` component. The room itself lives in the [plugin's repository](https://github.com/mematthew123/sanity-plugin-writing-room).
 - **One rule to keep.** Only Prose (title, body, and alt text on body images) may *block* a publish, because the Writer can't fix anything else from inside the room. Every Detail is optional, or at most a warning, and the Reading Site supplies a fallback when one is empty.
 
 ## Use the Writing Room in your own Studio
@@ -125,7 +125,7 @@ export default defineConfig({
 })
 ```
 
-List your own document types: the room finds their title, body, slug and published date, and only offers what each body can store. Then turn off Studio auto-updates (see [Deploying](#deploying)). The [plugin's README](packages/writing-room/README.md) has the rest: the starter schema for Studios without a Post type, colours and the optional theme, Preview for any framework, and compatibility. Releases are in its [changelog](packages/writing-room/CHANGELOG.md); [`docs/releasing.md`](docs/releasing.md) explains how they're made.
+List your own document types: the room finds their title, body, slug and published date, and only offers what each body can store. Then turn off Studio auto-updates (see [Deploying](#deploying)). The [plugin's README](https://github.com/mematthew123/sanity-plugin-writing-room#readme) has the rest: the starter schema for Studios without a Post type, colours and the optional theme, Preview for any framework, and compatibility. Releases are in its [changelog](https://github.com/mematthew123/sanity-plugin-writing-room/blob/main/CHANGELOG.md).
 
 ## Scripts
 
@@ -135,8 +135,6 @@ List your own document types: the room finds their title, body, slug and publish
 | `pnpm build` / `pnpm typecheck` / `pnpm lint` / `pnpm test` | Across every package |
 | `pnpm seed` | Adds the sample Posts |
 | `pnpm --filter studio typegen` | Regenerates the Reading Site's query types from the schema |
-| `pnpm --filter sanity-plugin-writing-room build` | Builds the plugin for npm (`packages/writing-room/dist`) |
-| `pnpm --filter sanity-plugin-writing-room smoke` | Installs the packed plugin into a fresh Studio and builds it (add a `sanity` version to test an older one) |
 | `pnpm validate` | Checks the repo against Sanity's template requirements |
 
 ## License

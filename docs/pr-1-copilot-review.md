@@ -1,6 +1,6 @@
 # PR #1 — Copilot review comments
 
-> **Paths have moved.** This record predates the Writing Room becoming a plugin. `apps/studio/src/writing-room/` is now `packages/writing-room/src/room/`; `apps/studio/src/actions/` and `apps/studio/src/lib/{slug,publish-details,slug-availability,image-url}.ts` are in `packages/writing-room/src/`; and `apps/studio/schemaTypes/` is `packages/writing-room/src/schema/`. See [`plugin-roadmap.md`](plugin-roadmap.md).
+> **Paths have moved.** This record predates the Writing Room becoming a plugin. `apps/studio/src/writing-room/` is now `packages/writing-room/src/room/`; `apps/studio/src/actions/` and `apps/studio/src/lib/{slug,publish-details,slug-availability,image-url}.ts` are in `packages/writing-room/src/`; and `apps/studio/schemaTypes/` is `packages/writing-room/src/schema/`. Since 2026-11-10 those live in the plugin's own repository, [sanity-plugin-writing-room](https://github.com/mematthew123/sanity-plugin-writing-room), at the same paths without `packages/writing-room/`.
 
 Source: [PR #1 "Stage 1: Foundations — Writing Room, publishing, and Reading Site"](https://github.com/mematthew123/calm-editor/pull/1), reviewed by `copilot-pull-request-reviewer` (12 inline comments, 3 high / 9 medium). The PR was merged with all 12 open; fixes live on branch `fix/pr1-copilot-review`.
 

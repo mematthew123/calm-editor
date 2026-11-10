@@ -8,22 +8,6 @@ export default defineCliConfig({
     // Keep the dev server's dependency cache out of node_modules/.sanity, which `sanity build`
     // and `sanity deploy` clear: running either alongside `sanity dev` broke the dev server.
     cacheDir: 'node_modules/.vite-studio',
-    resolve: {
-      ...config.resolve,
-      // The Writing Room is used from packages/writing-room/src, so its imports resolve from that
-      // package's node_modules. pnpm can give it a different copy of these than the Studio's, and
-      // two copies never share a React context ("SanityInstance context not found"). Resolve each
-      // once, from here.
-      dedupe: [
-        ...(config.resolve?.dedupe ?? []),
-        'sanity',
-        'react',
-        'react-dom',
-        'styled-components',
-        '@sanity/sdk-react',
-        '@portabletext/editor',
-      ],
-    },
   }),
   typegen: {
     path: '../web/src/**/*.{ts,tsx}',

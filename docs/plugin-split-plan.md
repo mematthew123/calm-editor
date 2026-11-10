@@ -2,10 +2,12 @@
 
 **Goal.** `sanity-plugin-writing-room` lives in its own public repository, and Calm Editor installs it from npm, the same as any other Studio. Calm Editor can then stay private.
 
-**Status:** in progress.
+**Status:** done, 2026-11-10.
 
-- **Phase 1 done (2026-11-10):** [mematthew123/sanity-plugin-writing-room](https://github.com/mematthew123/sanity-plugin-writing-room) is public, with the plugin's history from the extraction, the copied tokens and embed code, CI, the release workflow and a changeset for `0.1.0`.
-- **Phase 2 underway:** this pull request removes Calm Editor's release workflow and Changesets.
+- **Phase 1:** [mematthew123/sanity-plugin-writing-room](https://github.com/mematthew123/sanity-plugin-writing-room) is public, with the plugin's history from the extraction, the copied tokens and embed code, CI and the release workflow.
+- **Phase 2:** Calm Editor stopped publishing (#18); npm's trusted publisher moved to the new repository, which published `0.1.0` with provenance.
+- **Phase 3:** Calm Editor installs `sanity-plugin-writing-room@^0.1.0` from npm; `packages/writing-room`, its smoke test and the `resolve.dedupe` workaround are gone.
+- **Phase 4** (follow-ups) is still open.
 
 ## Where things stand
 
