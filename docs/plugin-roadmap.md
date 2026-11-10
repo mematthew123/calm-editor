@@ -17,7 +17,7 @@
 
 ## Stage 2: fit other content models
 
-- [ ] **Configurable document types.** `post` is still hard-coded in the plugin (tool intent, Lobby, Room handle, validation, navigation, slug query). new-zeph already generalised this for Posts + Case Studies with `WRITING_KINDS` in its `@calm/content` and `room-route.ts`. Port that here as an option, e.g. `types: [{type: 'post', path: (slug) => '/blog/' + slug}, {type: 'caseStudy', …}]`, keeping `/writing-room/<id>` working for Posts.
+- [x] **Configurable document types.** `writingRoom({types: ['post', 'caseStudy']})`, ported from new-zeph's `WRITING_KINDS` and `room-route.ts`. Names come from each schema type's `title` (overridable with `title`/`pluralTitle`); the first type keeps `/writing-room/<id>`, others open at `/writing-room/<type>/<id>`; `preview.pathname` gets `(slug, type)`; slugs are unique per type; the "Add a cover image" nudge only shows for types with a `coverImage` field. Still assumes `title`, `body`, `slug` and `publishedAt` (next item).
 - [ ] **Bring your own schema.** Document the contract (`title`, `body`, `slug`, `publishedAt`) and offer a helper that adds the room's fields to a user's document type, instead of only shipping our `post`.
 - [ ] **Name clashes.** `body` is a common type name. Make the body type name an option (the stored `_type`s of blocks, `embed`/`codeBlock`/`sectionBreak`, must stay as they are, or existing content needs a migration).
 - [ ] Unknown block types in a user's `body`: render a neutral placeholder rather than failing.
