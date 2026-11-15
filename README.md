@@ -137,6 +137,10 @@ List your own document types: the room finds their title, body, slug and publish
 | `pnpm --filter studio typegen` | Regenerates the Reading Site's query types from the schema |
 | `pnpm validate` | Checks the repo against Sanity's template requirements |
 
+## Who makes it
+
+Calm Editor and the Writing Room are made by Matthew R at [Zephyr Pixels](https://zephyrpixels.dev), who is available for Sanity work: adapting this template, or building Studios, plugins and the sites that read from them. [Get in touch](https://zephyrpixels.dev/contact).
+
 ## License
 
 [MIT](LICENSE)
